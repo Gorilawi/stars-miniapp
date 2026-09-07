@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stars Shop</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 16px;
+      min-height: 100%;
+      background: #111;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+    button, input {
+      width: 100%;
+      padding: 14px;
+      margin: 8px 0;
+      border: 0;
+      border-radius: 10px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    .item { background: #2a2a2a; color: #fff; }
+    .pay { background: #22c55e; color: #fff; }
+  </style>
+</head>
+<body>
+  <h2>Магазин Stars</h2>
+  <button class="item" onclick="selectStars(50)">50 Stars</button>
+  <button class="item" onclick="selectStars(100)">100 Stars</button>
+  <button class="item" onclick="selectStars(250)">250 Stars</button>
+  <button class="item" onclick="selectStars(500)">500 Stars</button>
+  <button class="item" onclick="selectStars(1000)">1000 Stars</button>
+  <button class="item" onclick="selectPremium(3)">Premium 3 мес.</button>
+  <button class="item" onclick="selectPremium(6)">Premium 6 мес.</button>
+  <button class="item" onclick="selectPremium(12)">Premium 12 мес.</button>
+  <input id="custom" type="number" placeholder="Своё количество Stars">
+  <button class="item" onclick="selectCustom()">Выбрать своё количество</button>
+  <input id="username" placeholder="username получателя">
+  <button class="pay" onclick="pay()">Оплатить</button>
+
+  <script>
+    const tg = window.Telegram && window.Telegram.WebApp;
+    if (tg) {
+      tg.ready();
+      tg.expand();
+    }
+
+    let order = { product: "stars", amount: 50 };
+
+    function selectStars(amount) {
+      order = { product: "stars", amount: amount };
+      alert("Выбрано: " + amount + " Stars");
+    }
+
+    function selectPremium(months) {
+      order = { product: "premium", months: months };
+      alert("Выбрано: Premium " + months + " мес.");
+    }
+
+    function selectCustom() {
+      const amount = Number(document.getElementById("custom").value);
+      if (!amount || amount < 50) {
+        alert("Минимум 50 Stars");
+        return;
+      }
+      order = { product: "stars", amount: amount };
+      alert("Выбрано: " + amount + " Stars");
+    }
+
+    function pay() {
+      const username = document.getElementById("username").value.trim().replace("@", "");
+      if (!username) {
+        alert("Напиши username");
+        return;
+      }
+      order.username = username;
+      if (tg) {
+        tg.sendData(JSON.stringify(order));
+        tg.close();
+      } else {
+        alert("Заказ: " + JSON.stringify(order));
+      }
+    }
+  </script>
+</body>
+</html>
