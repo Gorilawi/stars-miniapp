@@ -6,83 +6,107 @@
   <title>Stars Shop</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
-    html, body {
+    body {
       margin: 0;
-      padding: 16px;
-      min-height: 100%;
-      background: #111;
-      color: #fff;
       font-family: Arial, sans-serif;
+      background: linear-gradient(180deg, #0b1220, #121a2b);
+      color: #fff;
+      padding: 16px;
     }
-    button, input {
-      width: 100%;
-      padding: 14px;
-      margin: 8px 0;
+    h2 { margin: 0 0 8px; }
+    .sub { color: #9bb0c9; margin-bottom: 16px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .card, input, .pay {
       border: 0;
-      border-radius: 10px;
-      font-size: 16px;
-      box-sizing: border-box;
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 15px;
     }
-    .item { background: #2a2a2a; color: #fff; }
-    .pay { background: #22c55e; color: #fff; }
+    .card {
+      background: #1c2638;
+      color: #fff;
+      text-align: left;
+    }
+    .card b { display: block; font-size: 16px; }
+    .card span { color: #9bb0c9; font-size: 13px; }
+    .card.active { background: #2e6bff; }
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 8px;
+      background: #101827;
+      color: #fff;
+    }
+    .pay {
+      width: 100%;
+      margin-top: 14px;
+      background: #22c55e;
+      color: #fff;
+      font-weight: bold;
+    }
+    .section { margin-top: 16px; }
   </style>
 </head>
 <body>
-  <h2>Магазин Stars</h2>
-  <button class="item" onclick="selectStars(50)">50 Stars</button>
-  <button class="item" onclick="selectStars(100)">100 Stars</button>
-  <button class="item" onclick="selectStars(250)">250 Stars</button>
-  <button class="item" onclick="selectStars(500)">500 Stars</button>
-  <button class="item" onclick="selectStars(1000)">1000 Stars</button>
-  <button class="item" onclick="selectPremium(3)">Premium 3 мес.</button>
-  <button class="item" onclick="selectPremium(6)">Premium 6 мес.</button>
-  <button class="item" onclick="selectPremium(12)">Premium 12 мес.</button>
-  <input id="custom" type="number" placeholder="Своё количество Stars">
-  <button class="item" onclick="selectCustom()">Выбрать своё количество</button>
-  <input id="username" placeholder="username получателя">
-  <button class="pay" onclick="pay()">Оплатить</button>
+  <h2>Stars Shop</h2>
+  <div class="sub">Выбери товар и укажи username</div>
+
+  <div class="grid">
+    <button class="card" onclick="selectStars(50, this)"><b>50 Stars</b><span>0.88 USDT</span></button>
+    <button class="card" onclick="selectStars(100, this)"><b>100 Stars</b><span>1.75 USDT</span></button>
+    <button class="card" onclick="selectStars(250, this)"><b>250 Stars</b><span>4.38 USDT</span></button>
+    <button class="card" onclick="selectStars(500, this)"><b>500 Stars</b><span>8.75 USDT</span></button>
+    <button class="card" onclick="selectStars(1000, this)"><b>1000 Stars</b><span>17.50 USDT</span></button>
+    <button class="card" onclick="selectPremium(3, this)"><b>Premium 3</b><span>14.90 USDT</span></button>
+    <button class="card" onclick="selectPremium(6, this)"><b>Premium 6</b><span>19.90 USDT</span></button>
+    <button class="card" onclick="selectPremium(12, this)"><b>Premium 12</b><span>35.90 USDT</span></button>
+  </div>
+
+  <div class="section">
+    <input id="custom" type="number" placeholder="Своё количество Stars">
+    <input id="username" placeholder="username получателя">
+    <div class="sub" id="chosen">Выбрано: 50 Stars</div>
+    <button class="pay" onclick="pay()">Оплатить</button>
+  </div>
 
   <script>
     const tg = window.Telegram && window.Telegram.WebApp;
-    if (tg) {
-      tg.ready();
-      tg.expand();
-    }
+    if (tg) { tg.ready(); tg.expand(); }
 
     let order = { product: "stars", amount: 50 };
 
-    function selectStars(amount) {
-      order = { product: "stars", amount: amount };
-      alert("Выбрано: " + amount + " Stars");
+    function clearActive() {
+      document.querySelectorAll(".card").forEach(el => el.classList.remove("active"));
     }
 
-    function selectPremium(months) {
+    function selectStars(amount, btn) {
+      clearActive();
+      if (btn) btn.classList.add("active");
+      order = { product: "stars", amount: amount };
+      document.getElementById("chosen").innerText = "Выбрано: " + amount + " Stars";
+    }
+
+    function selectPremium(months, btn) {
+      clearActive();
+      if (btn) btn.classList.add("active");
       order = { product: "premium", months: months };
-      alert("Выбрано: Premium " + months + " мес.");
-    }
-
-    function selectCustom() {
-      const amount = Number(document.getElementById("custom").value);
-      if (!amount || amount < 50) {
-        alert("Минимум 50 Stars");
-        return;
-      }
-      order = { product: "stars", amount: amount };
-      alert("Выбрано: " + amount + " Stars");
+      document.getElementById("chosen").innerText = "Выбрано: Premium " + months + " мес.";
     }
 
     function pay() {
-      const username = document.getElementById("username").value.trim().replace("@", "");
-      if (!username) {
-        alert("Напиши username");
-        return;
+      const custom = Number(document.getElementById("custom").value);
+      if (custom) {
+        if (custom < 50) return alert("Минимум 50 Stars");
+        order = { product: "stars", amount: custom };
       }
+      const username = document.getElementById("username").value.trim().replace("@", "");
+      if (!username) return alert("Напиши username");
       order.username = username;
-      if (tg) {
+      if (tg && tg.sendData) {
         tg.sendData(JSON.stringify(order));
         tg.close();
       } else {
-        alert("Заказ: " + JSON.stringify(order));
+        alert("Открой магазин кнопкой внизу чата");
       }
     }
   </script>
