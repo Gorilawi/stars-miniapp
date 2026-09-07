@@ -21,12 +21,13 @@
     input { width:100%; box-sizing:border-box; margin-top:8px; background:#101827; color:#fff; }
     .pay { width:100%; margin-top:12px; background:#22c55e; color:#fff; font-weight:bold; }
     .sub { color:#9bb0c9; margin:10px 0; }
-    .reel-wrap { position:relative; overflow:hidden; height:100px; background:#101827; border-radius:14px; margin:12px 0; }
+    .case-card { width:100%; background:#172033; border-radius:18px; padding:16px; }
+    .reel-wrap { position:relative; overflow:hidden; height:110px; background:#101827; border-radius:14px; margin:12px 0; }
     .reel { display:flex; gap:8px; padding:16px; }
-    .reel.spin { animation: spin 2s ease-out forwards; }
-    .item { min-width:86px; height:68px; border-radius:12px; background:#2a3550; display:flex; align-items:center; justify-content:center; text-align:center; font-size:13px; }
+    .reel.spin { animation: spin 2.2s ease-out forwards; }
+    .item { min-width:90px; height:78px; border-radius:12px; background:#2a3550; display:flex; align-items:center; justify-content:center; text-align:center; font-size:22px; }
     .marker { position:absolute; left:50%; top:0; bottom:0; width:3px; background:#22c55e; }
-    @keyframes spin { from { transform:translateX(0); } to { transform:translateX(-820px); } }
+    @keyframes spin { from { transform:translateX(0); } to { transform:translateX(-860px); } }
   </style>
 </head>
 <body>
@@ -34,6 +35,7 @@
     <button class="tab active" id="tab-shop">⭐ Stars</button>
     <button class="tab" id="tab-cases">🎁 Кейсы</button>
   </div>
+
   <div id="shop" class="page active">
     <div class="grid">
       <button class="card" data-stars="50"><b>50 Stars</b><span>0.88 USDT</span></button>
@@ -50,27 +52,25 @@
     <div class="sub" id="chosen">Выбрано: 50 Stars</div>
     <button class="pay" id="pay-shop">Оплатить криптой</button>
   </div>
+
   <div id="cases" class="page">
-    <div class="sub">Обычные подарки Telegram. Без NFT.</div>
-    <div class="grid">
-      <button class="card active" data-case="mini"><b>Mini Case</b><span>50 ⭐</span></button>
-      <button class="card" data-case="fire"><b>Fire Case</b><span>150 ⭐</span></button>
-      <button class="card" data-case="gold"><b>Gold Case</b><span>400 ⭐</span></button>
+    <div class="case-card">
+      <b>Gift Case</b>
+      <div class="sub">59 ⭐ · главный приз — кольцо за 100 ⭐</div>
+      <div class="reel-wrap">
+        <div class="marker"></div>
+        <div class="reel" id="reel"></div>
+      </div>
+      <button class="pay" id="pay-case">Открыть за 59 ⭐</button>
     </div>
-    <div class="reel-wrap">
-      <div class="marker"></div>
-      <div class="reel" id="reel"></div>
-    </div>
-    <div class="sub" id="case_chosen">Выбран Mini Case</div>
-    <button class="pay" id="pay-case">Открыть кейс</button>
   </div>
+
   <script>
     const BOT_USERNAME = "Frckwqstarts_bot";
     const tg = window.Telegram && window.Telegram.WebApp;
     if (tg) { tg.ready(); tg.expand(); }
     let order = { product: "stars", amount: 50 };
-    let caseId = "mini";
-    const gifts = ["🧸","🌹","💝","🎂","🍾","🎁","💎","🏆","🎀","🍀"];
+    const icons = ["🧸","🌹","💝","🎂","🍾","🎁","🎀","🍀","💍"];
     function show(id) {
       document.getElementById("shop").classList.toggle("active", id === "shop");
       document.getElementById("cases").classList.toggle("active", id === "cases");
@@ -92,19 +92,11 @@
         }
       };
     });
-    document.querySelectorAll("#cases .card").forEach(btn => {
-      btn.onclick = () => {
-        document.querySelectorAll("#cases .card").forEach(x => x.classList.remove("active"));
-        btn.classList.add("active");
-        caseId = btn.dataset.case;
-        document.getElementById("case_chosen").innerText = "Выбран " + caseId + " case";
-      };
-    });
     const reel = document.getElementById("reel");
     for (let i = 0; i < 24; i++) {
       const el = document.createElement("div");
       el.className = "item";
-      el.innerText = gifts[i % gifts.length];
+      el.innerText = icons[i % icons.length];
       reel.appendChild(el);
     }
     function go(start) {
@@ -127,7 +119,7 @@
       reel.classList.remove("spin");
       void reel.offsetWidth;
       reel.classList.add("spin");
-      setTimeout(() => go("c_" + caseId + "_me"), 2000);
+      setTimeout(() => go("c_gift_me"), 2200);
     };
   </script>
 </body>
