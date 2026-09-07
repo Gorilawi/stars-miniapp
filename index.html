@@ -6,51 +6,21 @@
   <title>Stars Shop</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0b1220;
-      color: #fff;
-      padding: 16px;
-    }
-    .tabs { display: flex; gap: 8px; margin-bottom: 14px; }
-    .tab {
-      flex: 1;
-      padding: 12px;
-      border: 0;
-      border-radius: 12px;
-      background: #1c2638;
-      color: #fff;
-    }
-    .tab.active { background: #2e6bff; }
-    .page { display: none; }
-    .page.active { display: block; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .card, input, .pay {
-      border: 0;
-      border-radius: 14px;
-      padding: 14px;
-      font-size: 15px;
-    }
-    .card { background: #1c2638; color: #fff; text-align: left; }
-    .card b { display: block; }
-    .card span { color: #9bb0c9; font-size: 13px; }
-    .card.active { background: #2e6bff; }
-    input {
-      width: 100%;
-      box-sizing: border-box;
-      margin-top: 8px;
-      background: #101827;
-      color: #fff;
-    }
-    .pay {
-      width: 100%;
-      margin-top: 12px;
-      background: #22c55e;
-      color: #fff;
-      font-weight: bold;
-    }
-    .sub { color: #9bb0c9; margin: 10px 0; }
+    body { margin:0; font-family:Arial,sans-serif; background:#0b1220; color:#fff; padding:16px; }
+    .tabs { display:flex; gap:8px; margin-bottom:14px; }
+    .tab { flex:1; padding:12px; border:0; border-radius:12px; background:#1c2638; color:#fff; }
+    .tab.active { background:#2e6bff; }
+    .page { display:none; }
+    .page.active { display:block; }
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .card,input,.pay { border:0; border-radius:14px; padding:14px; font-size:15px; }
+    .card { background:#1c2638; color:#fff; text-align:left; }
+    .card b { display:block; }
+    .card span { color:#9bb0c9; font-size:13px; }
+    .card.active { background:#2e6bff; }
+    input { width:100%; box-sizing:border-box; margin-top:8px; background:#101827; color:#fff; }
+    .pay { width:100%; margin-top:12px; background:#22c55e; color:#fff; font-weight:bold; }
+    .sub { color:#9bb0c9; margin:10px 0; }
   </style>
 </head>
 <body>
@@ -79,7 +49,7 @@
   <div id="cases" class="page">
     <div class="sub">Кейсы оплачиваются звёздами Telegram</div>
     <div class="grid">
-      <button class="card" onclick="selectCase('mini', this)"><b>Mini Case</b><span>50 ⭐</span></button>
+      <button class="card active" onclick="selectCase('mini', this)"><b>Mini Case</b><span>50 ⭐</span></button>
       <button class="card" onclick="selectCase('fire', this)"><b>Fire Case</b><span>150 ⭐</span></button>
       <button class="card" onclick="selectCase('gold', this)"><b>Gold Case</b><span>400 ⭐</span></button>
     </div>
@@ -91,51 +61,36 @@
   <script>
     const tg = window.Telegram && window.Telegram.WebApp;
     if (tg) { tg.ready(); tg.expand(); }
-
     let order = { product: "stars", amount: 50 };
     let caseId = "mini";
-
     function showPage(id, btn) {
       document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
       document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
       document.getElementById(id).classList.add("active");
       btn.classList.add("active");
     }
-
     function clearActive(scope) {
       document.querySelectorAll("#" + scope + " .card").forEach(el => el.classList.remove("active"));
     }
-
     function selectStars(amount, btn) {
-      clearActive("shop");
-      btn.classList.add("active");
+      clearActive("shop"); btn.classList.add("active");
       order = { product: "stars", amount: amount };
       document.getElementById("chosen").innerText = "Выбрано: " + amount + " Stars";
     }
-
     function selectPremium(months, btn) {
-      clearActive("shop");
-      btn.classList.add("active");
+      clearActive("shop"); btn.classList.add("active");
       order = { product: "premium", months: months };
       document.getElementById("chosen").innerText = "Выбрано: Premium " + months + " мес.";
     }
-
     function selectCase(id, btn) {
-      clearActive("cases");
-      btn.classList.add("active");
+      clearActive("cases"); btn.classList.add("active");
       caseId = id;
       document.getElementById("case_chosen").innerText = "Выбран " + id + " case";
     }
-
     function send(data) {
-      if (tg && tg.sendData) {
-        tg.sendData(JSON.stringify(data));
-        tg.close();
-      } else {
-        alert("Открой Mini App кнопкой Магазин внизу чата");
-      }
+      if (tg && tg.sendData) { tg.sendData(JSON.stringify(data)); tg.close(); }
+      else { alert("Открой Mini App кнопкой Магазин внизу чата"); }
     }
-
     function payShop() {
       const custom = Number(document.getElementById("custom").value);
       if (custom) {
@@ -147,7 +102,6 @@
       order.username = username;
       send(order);
     }
-
     function payCase() {
       const username = document.getElementById("case_username").value.trim().replace("@", "");
       if (!username) return alert("Напиши username");
