@@ -9,12 +9,22 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: linear-gradient(180deg, #0b1220, #121a2b);
+      background: #0b1220;
       color: #fff;
       padding: 16px;
     }
-    h2 { margin: 0 0 8px; }
-    .sub { color: #9bb0c9; margin-bottom: 16px; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+    .tab {
+      flex: 1;
+      padding: 12px;
+      border: 0;
+      border-radius: 12px;
+      background: #1c2638;
+      color: #fff;
+    }
+    .tab.active { background: #2e6bff; }
+    .page { display: none; }
+    .page.active { display: block; }
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .card, input, .pay {
       border: 0;
@@ -22,12 +32,8 @@
       padding: 14px;
       font-size: 15px;
     }
-    .card {
-      background: #1c2638;
-      color: #fff;
-      text-align: left;
-    }
-    .card b { display: block; font-size: 16px; }
+    .card { background: #1c2638; color: #fff; text-align: left; }
+    .card b { display: block; }
     .card span { color: #9bb0c9; font-size: 13px; }
     .card.active { background: #2e6bff; }
     input {
@@ -39,34 +45,47 @@
     }
     .pay {
       width: 100%;
-      margin-top: 14px;
+      margin-top: 12px;
       background: #22c55e;
       color: #fff;
       font-weight: bold;
     }
-    .section { margin-top: 16px; }
+    .sub { color: #9bb0c9; margin: 10px 0; }
   </style>
 </head>
 <body>
-  <h2>Stars Shop</h2>
-  <div class="sub">Выбери товар и укажи username</div>
-
-  <div class="grid">
-    <button class="card" onclick="selectStars(50, this)"><b>50 Stars</b><span>0.88 USDT</span></button>
-    <button class="card" onclick="selectStars(100, this)"><b>100 Stars</b><span>1.75 USDT</span></button>
-    <button class="card" onclick="selectStars(250, this)"><b>250 Stars</b><span>4.38 USDT</span></button>
-    <button class="card" onclick="selectStars(500, this)"><b>500 Stars</b><span>8.75 USDT</span></button>
-    <button class="card" onclick="selectStars(1000, this)"><b>1000 Stars</b><span>17.50 USDT</span></button>
-    <button class="card" onclick="selectPremium(3, this)"><b>Premium 3</b><span>14.90 USDT</span></button>
-    <button class="card" onclick="selectPremium(6, this)"><b>Premium 6</b><span>19.90 USDT</span></button>
-    <button class="card" onclick="selectPremium(12, this)"><b>Premium 12</b><span>35.90 USDT</span></button>
+  <div class="tabs">
+    <button class="tab active" onclick="showPage('shop', this)">⭐ Stars</button>
+    <button class="tab" onclick="showPage('cases', this)">🎁 Кейсы</button>
   </div>
 
-  <div class="section">
+  <div id="shop" class="page active">
+    <div class="grid">
+      <button class="card" onclick="selectStars(50, this)"><b>50 Stars</b><span>0.88 USDT</span></button>
+      <button class="card" onclick="selectStars(100, this)"><b>100 Stars</b><span>1.75 USDT</span></button>
+      <button class="card" onclick="selectStars(250, this)"><b>250 Stars</b><span>4.38 USDT</span></button>
+      <button class="card" onclick="selectStars(500, this)"><b>500 Stars</b><span>8.75 USDT</span></button>
+      <button class="card" onclick="selectStars(1000, this)"><b>1000 Stars</b><span>17.50 USDT</span></button>
+      <button class="card" onclick="selectPremium(3, this)"><b>Premium 3</b><span>14.90 USDT</span></button>
+      <button class="card" onclick="selectPremium(6, this)"><b>Premium 6</b><span>19.90 USDT</span></button>
+      <button class="card" onclick="selectPremium(12, this)"><b>Premium 12</b><span>35.90 USDT</span></button>
+    </div>
     <input id="custom" type="number" placeholder="Своё количество Stars">
     <input id="username" placeholder="username получателя">
     <div class="sub" id="chosen">Выбрано: 50 Stars</div>
-    <button class="pay" onclick="pay()">Оплатить</button>
+    <button class="pay" onclick="payShop()">Оплатить криптой</button>
+  </div>
+
+  <div id="cases" class="page">
+    <div class="sub">Кейсы оплачиваются звёздами Telegram</div>
+    <div class="grid">
+      <button class="card" onclick="selectCase('mini', this)"><b>Mini Case</b><span>50 ⭐</span></button>
+      <button class="card" onclick="selectCase('fire', this)"><b>Fire Case</b><span>150 ⭐</span></button>
+      <button class="card" onclick="selectCase('gold', this)"><b>Gold Case</b><span>400 ⭐</span></button>
+    </div>
+    <input id="case_username" placeholder="username получателя приза">
+    <div class="sub" id="case_chosen">Выбран Mini Case</div>
+    <button class="pay" onclick="payCase()">Открыть за Stars</button>
   </div>
 
   <script>
@@ -74,26 +93,50 @@
     if (tg) { tg.ready(); tg.expand(); }
 
     let order = { product: "stars", amount: 50 };
+    let caseId = "mini";
 
-    function clearActive() {
-      document.querySelectorAll(".card").forEach(el => el.classList.remove("active"));
+    function showPage(id, btn) {
+      document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+      btn.classList.add("active");
+    }
+
+    function clearActive(scope) {
+      document.querySelectorAll("#" + scope + " .card").forEach(el => el.classList.remove("active"));
     }
 
     function selectStars(amount, btn) {
-      clearActive();
-      if (btn) btn.classList.add("active");
+      clearActive("shop");
+      btn.classList.add("active");
       order = { product: "stars", amount: amount };
       document.getElementById("chosen").innerText = "Выбрано: " + amount + " Stars";
     }
 
     function selectPremium(months, btn) {
-      clearActive();
-      if (btn) btn.classList.add("active");
+      clearActive("shop");
+      btn.classList.add("active");
       order = { product: "premium", months: months };
       document.getElementById("chosen").innerText = "Выбрано: Premium " + months + " мес.";
     }
 
-    function pay() {
+    function selectCase(id, btn) {
+      clearActive("cases");
+      btn.classList.add("active");
+      caseId = id;
+      document.getElementById("case_chosen").innerText = "Выбран " + id + " case";
+    }
+
+    function send(data) {
+      if (tg && tg.sendData) {
+        tg.sendData(JSON.stringify(data));
+        tg.close();
+      } else {
+        alert("Открой Mini App кнопкой Магазин внизу чата");
+      }
+    }
+
+    function payShop() {
       const custom = Number(document.getElementById("custom").value);
       if (custom) {
         if (custom < 50) return alert("Минимум 50 Stars");
@@ -102,12 +145,13 @@
       const username = document.getElementById("username").value.trim().replace("@", "");
       if (!username) return alert("Напиши username");
       order.username = username;
-      if (tg && tg.sendData) {
-        tg.sendData(JSON.stringify(order));
-        tg.close();
-      } else {
-        alert("Открой магазин кнопкой внизу чата");
-      }
+      send(order);
+    }
+
+    function payCase() {
+      const username = document.getElementById("case_username").value.trim().replace("@", "");
+      if (!username) return alert("Напиши username");
+      send({ product: "case", case_id: caseId, username: username });
     }
   </script>
 </body>
