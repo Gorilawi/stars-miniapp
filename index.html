@@ -21,12 +21,12 @@
     input { width:100%; box-sizing:border-box; margin-top:8px; background:#101827; color:#fff; }
     .pay { width:100%; margin-top:12px; background:#22c55e; color:#fff; font-weight:bold; }
     .sub { color:#9bb0c9; margin:10px 0; }
-    .reel-wrap { position:relative; overflow:hidden; height:90px; background:#101827; border-radius:14px; margin:12px 0; }
+    .reel-wrap { position:relative; overflow:hidden; height:100px; background:#101827; border-radius:14px; margin:12px 0; }
     .reel { display:flex; gap:8px; padding:16px; }
     .reel.spin { animation: spin 2s ease-out forwards; }
-    .item { min-width:70px; height:58px; border-radius:12px; background:#2a3550; display:flex; align-items:center; justify-content:center; font-weight:bold; }
+    .item { min-width:86px; height:68px; border-radius:12px; background:#2a3550; display:flex; align-items:center; justify-content:center; text-align:center; font-size:13px; }
     .marker { position:absolute; left:50%; top:0; bottom:0; width:3px; background:#22c55e; }
-    @keyframes spin { from { transform:translateX(0); } to { transform:translateX(-720px); } }
+    @keyframes spin { from { transform:translateX(0); } to { transform:translateX(-820px); } }
   </style>
 </head>
 <body>
@@ -51,7 +51,7 @@
     <button class="pay" id="pay-shop">Оплатить криптой</button>
   </div>
   <div id="cases" class="page">
-    <div class="sub">Кейсы оплачиваются звёздами Telegram</div>
+    <div class="sub">Обычные подарки Telegram. Без NFT.</div>
     <div class="grid">
       <button class="card active" data-case="mini"><b>Mini Case</b><span>50 ⭐</span></button>
       <button class="card" data-case="fire"><b>Fire Case</b><span>150 ⭐</span></button>
@@ -61,7 +61,6 @@
       <div class="marker"></div>
       <div class="reel" id="reel"></div>
     </div>
-    <input id="case_username" placeholder="username получателя приза">
     <div class="sub" id="case_chosen">Выбран Mini Case</div>
     <button class="pay" id="pay-case">Открыть кейс</button>
   </div>
@@ -71,7 +70,7 @@
     if (tg) { tg.ready(); tg.expand(); }
     let order = { product: "stars", amount: 50 };
     let caseId = "mini";
-    const prizes = [25, 50, 75, 100, 150, 200, 300, 400];
+    const gifts = ["🧸","🌹","💝","🎂","🍾","🎁","💎","🏆","🎀","🍀"];
     function show(id) {
       document.getElementById("shop").classList.toggle("active", id === "shop");
       document.getElementById("cases").classList.toggle("active", id === "cases");
@@ -101,17 +100,13 @@
         document.getElementById("case_chosen").innerText = "Выбран " + caseId + " case";
       };
     });
-    function fillReel() {
-      const reel = document.getElementById("reel");
-      reel.innerHTML = "";
-      for (let i = 0; i < 24; i++) {
-        const el = document.createElement("div");
-        el.className = "item";
-        el.innerText = prizes[i % prizes.length] + "⭐";
-        reel.appendChild(el);
-      }
+    const reel = document.getElementById("reel");
+    for (let i = 0; i < 24; i++) {
+      const el = document.createElement("div");
+      el.className = "item";
+      el.innerText = gifts[i % gifts.length];
+      reel.appendChild(el);
     }
-    fillReel();
     function go(start) {
       const url = "https://t.me/" + BOT_USERNAME + "?start=" + start;
       if (tg && tg.openTelegramLink) tg.openTelegramLink(url);
@@ -129,13 +124,10 @@
       else go("s_" + order.amount + "_" + username);
     };
     document.getElementById("pay-case").onclick = () => {
-      const username = document.getElementById("case_username").value.trim().replace("@", "");
-      if (!username) return alert("Напиши username");
-      const reel = document.getElementById("reel");
       reel.classList.remove("spin");
       void reel.offsetWidth;
       reel.classList.add("spin");
-      setTimeout(() => go("c_" + caseId + "_" + username), 2000);
+      setTimeout(() => go("c_" + caseId + "_me"), 2000);
     };
   </script>
 </body>
