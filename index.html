@@ -21,77 +21,103 @@
     input { width:100%; box-sizing:border-box; margin-top:8px; background:#101827; color:#fff; }
     .pay { width:100%; margin-top:12px; background:#22c55e; color:#fff; font-weight:bold; }
     .sub { color:#9bb0c9; margin:10px 0; }
+    .reel-wrap { position:relative; overflow:hidden; height:90px; background:#101827; border-radius:14px; margin:12px 0; }
+    .reel { display:flex; gap:8px; padding:16px; }
+    .reel.spin { animation: spin 2s ease-out forwards; }
+    .item { min-width:70px; height:58px; border-radius:12px; background:#2a3550; display:flex; align-items:center; justify-content:center; font-weight:bold; }
+    .marker { position:absolute; left:50%; top:0; bottom:0; width:3px; background:#22c55e; }
+    @keyframes spin { from { transform:translateX(0); } to { transform:translateX(-720px); } }
   </style>
 </head>
 <body>
   <div class="tabs">
-    <button class="tab active" onclick="showPage('shop', this)">⭐ Stars</button>
-    <button class="tab" onclick="showPage('cases', this)">🎁 Кейсы</button>
+    <button class="tab active" id="tab-shop">⭐ Stars</button>
+    <button class="tab" id="tab-cases">🎁 Кейсы</button>
   </div>
-
   <div id="shop" class="page active">
     <div class="grid">
-      <button class="card" onclick="selectStars(50, this)"><b>50 Stars</b><span>0.88 USDT</span></button>
-      <button class="card" onclick="selectStars(100, this)"><b>100 Stars</b><span>1.75 USDT</span></button>
-      <button class="card" onclick="selectStars(250, this)"><b>250 Stars</b><span>4.38 USDT</span></button>
-      <button class="card" onclick="selectStars(500, this)"><b>500 Stars</b><span>8.75 USDT</span></button>
-      <button class="card" onclick="selectStars(1000, this)"><b>1000 Stars</b><span>17.50 USDT</span></button>
-      <button class="card" onclick="selectPremium(3, this)"><b>Premium 3</b><span>14.90 USDT</span></button>
-      <button class="card" onclick="selectPremium(6, this)"><b>Premium 6</b><span>19.90 USDT</span></button>
-      <button class="card" onclick="selectPremium(12, this)"><b>Premium 12</b><span>35.90 USDT</span></button>
+      <button class="card" data-stars="50"><b>50 Stars</b><span>0.88 USDT</span></button>
+      <button class="card" data-stars="100"><b>100 Stars</b><span>1.75 USDT</span></button>
+      <button class="card" data-stars="250"><b>250 Stars</b><span>4.38 USDT</span></button>
+      <button class="card" data-stars="500"><b>500 Stars</b><span>8.75 USDT</span></button>
+      <button class="card" data-stars="1000"><b>1000 Stars</b><span>17.50 USDT</span></button>
+      <button class="card" data-prem="3"><b>Premium 3</b><span>14.90 USDT</span></button>
+      <button class="card" data-prem="6"><b>Premium 6</b><span>19.90 USDT</span></button>
+      <button class="card" data-prem="12"><b>Premium 12</b><span>35.90 USDT</span></button>
     </div>
     <input id="custom" type="number" placeholder="Своё количество Stars">
     <input id="username" placeholder="username получателя">
     <div class="sub" id="chosen">Выбрано: 50 Stars</div>
-    <button class="pay" onclick="payShop()">Оплатить криптой</button>
+    <button class="pay" id="pay-shop">Оплатить криптой</button>
   </div>
-
   <div id="cases" class="page">
     <div class="sub">Кейсы оплачиваются звёздами Telegram</div>
     <div class="grid">
-      <button class="card active" onclick="selectCase('mini', this)"><b>Mini Case</b><span>50 ⭐</span></button>
-      <button class="card" onclick="selectCase('fire', this)"><b>Fire Case</b><span>150 ⭐</span></button>
-      <button class="card" onclick="selectCase('gold', this)"><b>Gold Case</b><span>400 ⭐</span></button>
+      <button class="card active" data-case="mini"><b>Mini Case</b><span>50 ⭐</span></button>
+      <button class="card" data-case="fire"><b>Fire Case</b><span>150 ⭐</span></button>
+      <button class="card" data-case="gold"><b>Gold Case</b><span>400 ⭐</span></button>
+    </div>
+    <div class="reel-wrap">
+      <div class="marker"></div>
+      <div class="reel" id="reel"></div>
     </div>
     <input id="case_username" placeholder="username получателя приза">
     <div class="sub" id="case_chosen">Выбран Mini Case</div>
-    <button class="pay" onclick="payCase()">Открыть за Stars</button>
+    <button class="pay" id="pay-case">Открыть кейс</button>
   </div>
-
   <script>
+    const BOT_USERNAME = "Frckwqstarts_bot";
     const tg = window.Telegram && window.Telegram.WebApp;
     if (tg) { tg.ready(); tg.expand(); }
     let order = { product: "stars", amount: 50 };
     let caseId = "mini";
-    function showPage(id, btn) {
-      document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-      document.getElementById(id).classList.add("active");
-      btn.classList.add("active");
+    const prizes = [25, 50, 75, 100, 150, 200, 300, 400];
+    function show(id) {
+      document.getElementById("shop").classList.toggle("active", id === "shop");
+      document.getElementById("cases").classList.toggle("active", id === "cases");
+      document.getElementById("tab-shop").classList.toggle("active", id === "shop");
+      document.getElementById("tab-cases").classList.toggle("active", id === "cases");
     }
-    function clearActive(scope) {
-      document.querySelectorAll("#" + scope + " .card").forEach(el => el.classList.remove("active"));
+    document.getElementById("tab-shop").onclick = () => show("shop");
+    document.getElementById("tab-cases").onclick = () => show("cases");
+    document.querySelectorAll("#shop .card").forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll("#shop .card").forEach(x => x.classList.remove("active"));
+        btn.classList.add("active");
+        if (btn.dataset.stars) {
+          order = { product: "stars", amount: Number(btn.dataset.stars) };
+          document.getElementById("chosen").innerText = "Выбрано: " + btn.dataset.stars + " Stars";
+        } else {
+          order = { product: "premium", months: Number(btn.dataset.prem) };
+          document.getElementById("chosen").innerText = "Выбрано: Premium " + btn.dataset.prem + " мес.";
+        }
+      };
+    });
+    document.querySelectorAll("#cases .card").forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll("#cases .card").forEach(x => x.classList.remove("active"));
+        btn.classList.add("active");
+        caseId = btn.dataset.case;
+        document.getElementById("case_chosen").innerText = "Выбран " + caseId + " case";
+      };
+    });
+    function fillReel() {
+      const reel = document.getElementById("reel");
+      reel.innerHTML = "";
+      for (let i = 0; i < 24; i++) {
+        const el = document.createElement("div");
+        el.className = "item";
+        el.innerText = prizes[i % prizes.length] + "⭐";
+        reel.appendChild(el);
+      }
     }
-    function selectStars(amount, btn) {
-      clearActive("shop"); btn.classList.add("active");
-      order = { product: "stars", amount: amount };
-      document.getElementById("chosen").innerText = "Выбрано: " + amount + " Stars";
+    fillReel();
+    function go(start) {
+      const url = "https://t.me/" + BOT_USERNAME + "?start=" + start;
+      if (tg && tg.openTelegramLink) tg.openTelegramLink(url);
+      else window.location.href = url;
     }
-    function selectPremium(months, btn) {
-      clearActive("shop"); btn.classList.add("active");
-      order = { product: "premium", months: months };
-      document.getElementById("chosen").innerText = "Выбрано: Premium " + months + " мес.";
-    }
-    function selectCase(id, btn) {
-      clearActive("cases"); btn.classList.add("active");
-      caseId = id;
-      document.getElementById("case_chosen").innerText = "Выбран " + id + " case";
-    }
-    function send(data) {
-      if (tg && tg.sendData) { tg.sendData(JSON.stringify(data)); tg.close(); }
-      else { alert("Открой Mini App кнопкой Магазин внизу чата"); }
-    }
-    function payShop() {
+    document.getElementById("pay-shop").onclick = () => {
       const custom = Number(document.getElementById("custom").value);
       if (custom) {
         if (custom < 50) return alert("Минимум 50 Stars");
@@ -99,14 +125,18 @@
       }
       const username = document.getElementById("username").value.trim().replace("@", "");
       if (!username) return alert("Напиши username");
-      order.username = username;
-      send(order);
-    }
-    function payCase() {
+      if (order.product === "premium") go("p_" + order.months + "_" + username);
+      else go("s_" + order.amount + "_" + username);
+    };
+    document.getElementById("pay-case").onclick = () => {
       const username = document.getElementById("case_username").value.trim().replace("@", "");
       if (!username) return alert("Напиши username");
-      send({ product: "case", case_id: caseId, username: username });
-    }
+      const reel = document.getElementById("reel");
+      reel.classList.remove("spin");
+      void reel.offsetWidth;
+      reel.classList.add("spin");
+      setTimeout(() => go("c_" + caseId + "_" + username), 2000);
+    };
   </script>
 </body>
 </html>
