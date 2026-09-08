@@ -6,76 +6,117 @@
   <title>Stars Shop</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
-    body { margin:0; font-family:Arial,sans-serif; background:#0b1220; color:#fff; padding:16px; }
-    .tabs { display:flex; gap:8px; margin-bottom:14px; }
-    .tab { flex:1; padding:12px; border:0; border-radius:12px; background:#1c2638; color:#fff; }
-    .tab.active { background:#2e6bff; }
+    :root { --bg:#121218; --card:#1c1c24; --line:#2a2a36; --text:#fff; --muted:#9aa0b4; --violet:#7b5cff; --green:#22c55e; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Arial,sans-serif; background:var(--bg); color:var(--text); padding:12px 12px 86px; }
+    .top { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+    .user { display:flex; gap:10px; align-items:center; }
+    .ava { width:42px; height:42px; border-radius:50%; background:#2d2d3a; display:flex; align-items:center; justify-content:center; }
+    .muted { color:var(--muted); font-size:12px; }
+    .bal { font-size:20px; font-weight:700; }
+    .fill { background:var(--violet); color:#fff; border:0; border-radius:14px; padding:10px 14px; font-weight:700; }
+    .banner { background:linear-gradient(135deg,#3b1d8f,#6d3cff); border-radius:18px; padding:16px; margin:12px 0; }
+    .banner b { font-size:22px; }
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:18px; overflow:hidden; }
+    .art { height:140px; display:flex; align-items:center; justify-content:center; font-size:52px; background:radial-gradient(circle at top,#2a2150,transparent 70%); }
+    .meta { padding:10px; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+    .meta b { display:block; font-size:13px; }
+    .btn { border:0; border-radius:12px; padding:8px 10px; color:#fff; font-weight:700; background:var(--violet); }
+    .shop input { width:100%; margin:8px 0; padding:12px; border:0; border-radius:12px; background:#101018; color:#fff; }
     .page { display:none; }
-    .page.active { display:block; }
-    .grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-    .card,input,.pay { border:0; border-radius:14px; padding:14px; font-size:15px; }
-    .card { background:#1c2638; color:#fff; text-align:left; }
-    .card b { display:block; }
-    .card span { color:#9bb0c9; font-size:13px; }
-    input { width:100%; box-sizing:border-box; margin-top:8px; background:#101827; color:#fff; }
-    .pay { width:100%; margin-top:12px; background:#22c55e; color:#fff; font-weight:bold; }
-    .sub { color:#9bb0c9; margin:10px 0; }
-    .case-card { background:#172033; border-radius:18px; padding:16px; }
-    .reel-wrap { overflow:hidden; height:100px; background:#101827; border-radius:14px; margin:12px 0; }
-    .reel { display:flex; gap:8px; padding:16px; }
-    .item { min-width:86px; height:68px; border-radius:12px; background:#2a3550; display:flex; align-items:center; justify-content:center; font-size:22px; }
+    .page.on { display:block; }
+    .nav { position:fixed; left:0; right:0; bottom:0; background:#18181f; display:flex; border-top:1px solid var(--line); }
+    .nav button { flex:1; background:none; border:0; color:var(--muted); padding:10px 0 14px; }
+    .nav button.on { color:#fff; }
+    .hidden { display:none; }
   </style>
 </head>
 <body>
-  <div class="tabs">
-    <button class="tab active" id="tab-shop">⭐ Stars</button>
-    <button class="tab" id="tab-cases">🎁 Кейсы</button>
+  <div class="top">
+    <div class="user">
+      <div class="ava">⭐</div>
+      <div>
+        <div class="muted">Магазин</div>
+        <div class="bal" id="uname">Stars Shop</div>
+      </div>
+    </div>
+    <button class="fill" id="to-shop">Купить Stars</button>
   </div>
 
-  <div id="shop" class="page active">
+  <div id="home" class="page on">
+    <div class="banner">
+      <div class="muted">NEW</div>
+      <b>Кейсы за Stars</b>
+      <div class="muted">Обычные подарки Telegram, без NFT</div>
+    </div>
     <div class="grid">
-      <button class="card" data-stars="50"><b>50 Stars</b><span>0.88 USDT</span></button>
-      <button class="card" data-stars="100"><b>100 Stars</b><span>1.75 USDT</span></button>
-      <button class="card" data-stars="250"><b>250 Stars</b><span>4.38 USDT</span></button>
-      <button class="card" data-stars="500"><b>500 Stars</b><span>8.75 USDT</span></button>
-      <button class="card" data-stars="1000"><b>1000 Stars</b><span>17.50 USDT</span></button>
-      <button class="card" data-prem="3"><b>Premium 3</b><span>14.90 USDT</span></button>
-      <button class="card" data-prem="6"><b>Premium 6</b><span>19.90 USDT</span></button>
-      <button class="card" data-prem="12"><b>Premium 12</b><span>35.90 USDT</span></button>
+      <div class="card">
+        <div class="art">🎁</div>
+        <div class="meta">
+          <div><b>Gift Case</b><span class="muted">обычный подарок</span></div>
+          <button class="btn" id="open-case">59 ⭐</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="art">⭐</div>
+        <div class="meta">
+          <div><b>Stars</b><span class="muted">покупка за крипту</span></div>
+          <button class="btn" id="to-shop-2">Купить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="shop" class="page shop">
+    <div class="grid">
+      <button class="card" data-stars="50"><div class="art">⭐</div><div class="meta"><b>50 Stars</b><span class="muted">0.88 USDT</span></div></button>
+      <button class="card" data-stars="100"><div class="art">⭐</div><div class="meta"><b>100 Stars</b><span class="muted">1.75 USDT</span></div></button>
+      <button class="card" data-stars="250"><div class="art">⭐</div><div class="meta"><b>250 Stars</b><span class="muted">4.38 USDT</span></div></button>
+      <button class="card" data-stars="500"><div class="art">⭐</div><div class="meta"><b>500 Stars</b><span class="muted">8.75 USDT</span></div></button>
+      <button class="card" data-prem="3"><div class="art">💎</div><div class="meta"><b>Premium 3</b><span class="muted">14.90 USDT</span></div></button>
+      <button class="card" data-prem="12"><div class="art">💎</div><div class="meta"><b>Premium 12</b><span class="muted">35.90 USDT</span></div></button>
     </div>
     <input id="custom" type="number" placeholder="Своё количество Stars">
     <input id="username" placeholder="username получателя">
-    <div class="sub" id="chosen">Выбрано: 50 Stars</div>
-    <button class="pay" id="pay-shop">Оплатить</button>
+    <div class="muted" id="chosen">Выбрано: 50 Stars</div>
+    <button class="fill" id="pay-shop" style="width:100%;margin-top:10px">Оплатить криптой</button>
   </div>
 
-  <div id="cases" class="page">
-    <div class="case-card">
-      <b>Gift Case</b>
-      <div class="sub">59 ⭐</div>
-      <div class="reel-wrap"><div class="reel" id="reel"></div></div>
-      <button class="pay" id="pay-case">Открыть</button>
-    </div>
+  <div class="nav">
+    <button id="nav-home" class="on">Главная</button>
+    <button id="nav-shop">Stars</button>
+    <button id="nav-case">Кейсы</button>
   </div>
 
   <script>
     const BOT_USERNAME = "Frckwqstarts_bot";
     const tg = window.Telegram && window.Telegram.WebApp;
     if (tg) { tg.ready(); tg.expand(); }
-    let order = { product: "stars", amount: 50 };
-    const icons = ["🧸","🌹","💝","🎂","🎁","🎀","🍀","💍"];
-    function show(id) {
-      document.getElementById("shop").classList.toggle("active", id === "shop");
-      document.getElementById("cases").classList.toggle("active", id === "cases");
-      document.getElementById("tab-shop").classList.toggle("active", id === "shop");
-      document.getElementById("tab-cases").classList.toggle("active", id === "cases");
+    if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+      document.getElementById("uname").innerText = tg.initDataUnsafe.user.first_name;
     }
-    document.getElementById("tab-shop").onclick = () => show("shop");
-    document.getElementById("tab-cases").onclick = () => show("cases");
+    let order = { product: "stars", amount: 50 };
+    function show(id) {
+      document.getElementById("home").classList.toggle("on", id === "home");
+      document.getElementById("shop").classList.toggle("on", id === "shop");
+      document.getElementById("nav-home").classList.toggle("on", id === "home");
+      document.getElementById("nav-shop").classList.toggle("on", id === "shop");
+      document.getElementById("nav-case").classList.toggle("on", id === "home");
+    }
+    function go(start) {
+      const url = "https://t.me/" + BOT_USERNAME + "?start=" + start;
+      if (tg && tg.openTelegramLink) tg.openTelegramLink(url);
+      else window.location.href = url;
+    }
+    document.getElementById("nav-home").onclick = () => show("home");
+    document.getElementById("nav-shop").onclick = () => show("shop");
+    document.getElementById("nav-case").onclick = () => show("home");
+    document.getElementById("to-shop").onclick = () => show("shop");
+    document.getElementById("to-shop-2").onclick = () => show("shop");
+    document.getElementById("open-case").onclick = () => go("c_gift_me");
     document.querySelectorAll("#shop .card").forEach(btn => {
       btn.onclick = () => {
-        document.querySelectorAll("#shop .card").forEach(x => x.classList.remove("active"));
-        btn.classList.add("active");
         if (btn.dataset.stars) {
           order = { product: "stars", amount: Number(btn.dataset.stars) };
           document.getElementById("chosen").innerText = "Выбрано: " + btn.dataset.stars + " Stars";
@@ -85,18 +126,6 @@
         }
       };
     });
-    const reel = document.getElementById("reel");
-    for (let i = 0; i < 20; i++) {
-      const el = document.createElement("div");
-      el.className = "item";
-      el.innerText = icons[i % icons.length];
-      reel.appendChild(el);
-    }
-    function go(start) {
-      const url = "https://t.me/" + BOT_USERNAME + "?start=" + start;
-      if (tg && tg.openTelegramLink) tg.openTelegramLink(url);
-      else window.location.href = url;
-    }
     document.getElementById("pay-shop").onclick = () => {
       const custom = Number(document.getElementById("custom").value);
       if (custom) {
@@ -108,7 +137,6 @@
       if (order.product === "premium") go("p_" + order.months + "_" + username);
       else go("s_" + order.amount + "_" + username);
     };
-    document.getElementById("pay-case").onclick = () => go("c_gift_me");
   </script>
 </body>
 </html>
