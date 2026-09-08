@@ -11,26 +11,17 @@
     .muted { color:#9aa0b4; font-size:13px; }
     .fill { background:#7b5cff; color:#fff; border:0; border-radius:14px; padding:10px 14px; font-weight:700; }
     .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; }
-    .card { background:#1c1c24; border-radius:18px; padding:12px; color:#fff; border:0; text-align:left; }
+    .card { background:#1c1c24; border:0; border-radius:18px; padding:12px; color:#fff; text-align:left; }
     .page { display:none; }
     .page.on { display:block; }
     input { width:100%; box-sizing:border-box; margin:8px 0; padding:12px; border:0; border-radius:12px; background:#101018; color:#fff; }
     .nav { position:fixed; left:0; right:0; bottom:0; background:#18181f; display:flex; padding:8px 0 12px; }
     .nav button { flex:1; border:0; background:none; color:#9aa0b4; }
     .nav button.on { color:#fff; }
-    .ic {
-      width:52px; height:52px; margin:0 auto 12px;
-      background-image:url("icons.png");
-      background-repeat:no-repeat;
-      background-size:300% 200%;
-    }
-    .nav .ic { width:28px; height:28px; margin:0 auto 4px; }
-    .home { background-position:0% 0%; }
-    .star { background-position:50% 0%; }
-    .bag { background-position:100% 0%; }
-    .bag2 { background-position:0% 100%; }
-    .star2 { background-position:50% 100%; }
-    .bag3 { background-position:100% 100%; }
+    .ico { width:52px; height:52px; border-radius:14px; background:#2a2a32; display:flex; align-items:center; justify-content:center; margin-bottom:10px; }
+    .nav .ico { width:28px; height:28px; margin:0 auto 4px; background:transparent; }
+    svg { width:26px; height:26px; fill:#d7d7de; }
+    .nav svg { width:20px; height:20px; }
   </style>
 </head>
 <body>
@@ -45,13 +36,13 @@
   <div id="home" class="page on">
     <div class="grid">
       <div class="card">
-        <div class="ic bag"></div>
+        <div class="ico" id="i-bag"></div>
         <b>Gift Case</b>
         <div class="muted">59 ⭐</div>
         <button class="fill" id="open-case" style="width:100%;margin-top:10px">Открыть</button>
       </div>
       <div class="card">
-        <div class="ic star2"></div>
+        <div class="ico" id="i-star"></div>
         <b>Stars</b>
         <div class="muted">покупка за крипту</div>
         <button class="fill" id="to-shop-2" style="width:100%;margin-top:10px">Купить</button>
@@ -61,10 +52,10 @@
 
   <div id="shop" class="page">
     <div class="grid">
-      <button class="card" data-stars="50"><div class="ic star"></div><b>50 Stars</b><div class="muted">0.88 USDT</div></button>
-      <button class="card" data-stars="100"><div class="ic star2"></div><b>100 Stars</b><div class="muted">1.75 USDT</div></button>
-      <button class="card" data-stars="250"><div class="ic star"></div><b>250 Stars</b><div class="muted">4.38 USDT</div></button>
-      <button class="card" data-prem="3"><div class="ic bag2"></div><b>Premium 3</b><div class="muted">14.90 USDT</div></button>
+      <button class="card" data-stars="50"><div class="ico starbox"></div><b>50 Stars</b><div class="muted">0.88 USDT</div></button>
+      <button class="card" data-stars="100"><div class="ico starbox"></div><b>100 Stars</b><div class="muted">1.75 USDT</div></button>
+      <button class="card" data-stars="250"><div class="ico starbox"></div><b>250 Stars</b><div class="muted">4.38 USDT</div></button>
+      <button class="card" data-prem="3"><div class="ico bagbox"></div><b>Premium 3</b><div class="muted">14.90 USDT</div></button>
     </div>
     <input id="custom" type="number" placeholder="Своё количество Stars">
     <input id="username" placeholder="username получателя">
@@ -72,12 +63,23 @@
   </div>
 
   <div class="nav">
-    <button id="n1" class="on"><div class="ic home"></div>Главная</button>
-    <button id="n2"><div class="ic star"></div>Stars</button>
-    <button id="n3"><div class="ic bag3"></div>Кейсы</button>
+    <button id="n1" class="on"><div class="ico" id="n-home"></div>Главная</button>
+    <button id="n2"><div class="ico" id="n-star"></div>Stars</button>
+    <button id="n3"><div class="ico" id="n-bag"></div>Кейсы</button>
   </div>
 
   <script>
+    const homeSvg = '<svg viewBox="0 0 24 24"><path d="M12 4 4 11h2v8h5v-6h2v6h5v-8h2z"/></svg>';
+    const starSvg = '<svg viewBox="0 0 24 24"><path d="M12 3l2.6 6.3L21 10l-4.5 4.1L17.8 21 12 17.6 6.2 21l1.3-6.9L3 10l6.4-.7z"/></svg>';
+    const bagSvg = '<svg viewBox="0 0 24 24"><path d="M8 7V6a4 4 0 0 1 8 0v1h3v13H5V7h3zm2 0h4V6a2 2 0 0 0-4 0v1z"/></svg>';
+    document.getElementById("i-bag").innerHTML = bagSvg;
+    document.getElementById("i-star").innerHTML = starSvg;
+    document.getElementById("n-home").innerHTML = homeSvg;
+    document.getElementById("n-star").innerHTML = starSvg;
+    document.getElementById("n-bag").innerHTML = bagSvg;
+    document.querySelectorAll(".starbox").forEach(el => el.innerHTML = starSvg);
+    document.querySelectorAll(".bagbox").forEach(el => el.innerHTML = bagSvg);
+
     const BOT_USERNAME = "Frckwqstarts_bot";
     const tg = window.Telegram && window.Telegram.WebApp;
     if (tg) { tg.ready(); tg.expand(); }
