@@ -6,16 +6,36 @@
   <title>Stars Shop</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
-    body { margin:0; font-family:Arial,sans-serif; background:#121218; color:#fff; padding:12px 12px 86px; }
+    body { margin:0; font-family:Arial,sans-serif; color:#fff; padding:12px 12px 86px; overflow:hidden; }
+    .bg {
+      position:fixed; inset:-20px;
+      background:#000 url("bg.jpg") center/cover no-repeat;
+      animation: move 18s ease-in-out infinite alternate;
+      z-index:-2;
+    }
+    .dim {
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.55);
+      animation: pulse 5s ease-in-out infinite;
+      z-index:-1;
+    }
+    @keyframes move {
+      from { transform:scale(1) translate(0,0); }
+      to { transform:scale(1.12) translate(-12px,-8px); }
+    }
+    @keyframes pulse {
+      0%,100% { background:rgba(0,0,0,.62); }
+      50% { background:rgba(0,0,0,.42); }
+    }
     .top { display:flex; justify-content:space-between; align-items:center; }
-    .muted { color:#9aa0b4; font-size:13px; }
+    .muted { color:#d7d7de; font-size:13px; }
     .fill { background:#7b5cff; color:#fff; border:0; border-radius:14px; padding:10px 14px; font-weight:700; }
     .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; }
-    .card { background:#1c1c24; border:0; border-radius:18px; padding:12px; color:#fff; text-align:left; }
+    .card { background:rgba(20,20,28,.82); border:0; border-radius:18px; padding:12px; color:#fff; text-align:left; }
     .page { display:none; }
     .page.on { display:block; }
     input { width:100%; box-sizing:border-box; margin:8px 0; padding:12px; border:0; border-radius:12px; background:#101018; color:#fff; }
-    .nav { position:fixed; left:0; right:0; bottom:0; background:#18181f; display:flex; padding:8px 0 12px; }
+    .nav { position:fixed; left:0; right:0; bottom:0; background:rgba(18,18,24,.92); display:flex; padding:8px 0 12px; }
     .nav button { flex:1; border:0; background:none; color:#9aa0b4; }
     .nav button.on { color:#fff; }
     .ico { width:52px; height:52px; border-radius:14px; background:#2a2a32; display:flex; align-items:center; justify-content:center; margin-bottom:10px; }
@@ -25,6 +45,8 @@
   </style>
 </head>
 <body>
+  <div class="bg"></div>
+  <div class="dim"></div>
   <div class="top">
     <div>
       <div class="muted">Магазин</div>
@@ -32,7 +54,6 @@
     </div>
     <button class="fill" id="to-shop">Купить Stars</button>
   </div>
-
   <div id="home" class="page on">
     <div class="grid">
       <div class="card">
@@ -49,7 +70,6 @@
       </div>
     </div>
   </div>
-
   <div id="shop" class="page">
     <div class="grid">
       <button class="card" data-stars="50"><div class="ico starbox"></div><b>50 Stars</b><div class="muted">0.88 USDT</div></button>
@@ -61,13 +81,11 @@
     <input id="username" placeholder="username получателя">
     <button class="fill" id="pay-shop" style="width:100%">Оплатить криптой</button>
   </div>
-
   <div class="nav">
     <button id="n1" class="on"><div class="ico" id="n-home"></div>Главная</button>
     <button id="n2"><div class="ico" id="n-star"></div>Stars</button>
     <button id="n3"><div class="ico" id="n-bag"></div>Кейсы</button>
   </div>
-
   <script>
     const homeSvg = '<svg viewBox="0 0 24 24"><path d="M12 4 4 11h2v8h5v-6h2v6h5v-8h2z"/></svg>';
     const starSvg = '<svg viewBox="0 0 24 24"><path d="M12 3l2.6 6.3L21 10l-4.5 4.1L17.8 21 12 17.6 6.2 21l1.3-6.9L3 10l6.4-.7z"/></svg>';
@@ -79,7 +97,6 @@
     document.getElementById("n-bag").innerHTML = bagSvg;
     document.querySelectorAll(".starbox").forEach(el => el.innerHTML = starSvg);
     document.querySelectorAll(".bagbox").forEach(el => el.innerHTML = bagSvg);
-
     const BOT_USERNAME = "Frckwqstarts_bot";
     const tg = window.Telegram && window.Telegram.WebApp;
     if (tg) { tg.ready(); tg.expand(); }
