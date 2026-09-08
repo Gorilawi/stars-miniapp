@@ -6,64 +6,52 @@
   <title>Stars Shop</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
-    body { margin:0; font-family:Arial,sans-serif; color:#fff; padding:12px 12px 86px; overflow:hidden; }
+    body { margin:0; font-family:Arial,sans-serif; color:#fff; padding:12px 12px 86px; background:#07070a; }
     .bg {
-      position:fixed; inset:-20px;
-      background:#000 url("bg.jpg") center/cover no-repeat;
-      animation: move 18s ease-in-out infinite alternate;
-      z-index:-2;
+      position:fixed; inset:0; z-index:-1;
+      background:
+        radial-gradient(circle at 50% 30%, rgba(255,170,40,.28), transparent 42%),
+        radial-gradient(circle at 50% 55%, rgba(255,120,0,.12), #07070a 70%);
+      animation: glow 4s ease-in-out infinite;
     }
-    .dim {
-      position:fixed; inset:0;
-      background:rgba(0,0,0,.55);
-      animation: pulse 5s ease-in-out infinite;
-      z-index:-1;
+    .star {
+      position:fixed; left:50%; top:18%;
+      width:220px; height:220px; margin-left:-110px; z-index:-1;
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+      background: linear-gradient(180deg,#ffd36a,#f59e0b);
+      opacity:.35;
+      animation: spin 16s linear infinite;
     }
-    @keyframes move {
-      from { transform:scale(1) translate(0,0); }
-      to { transform:scale(1.12) translate(-12px,-8px); }
-    }
-    @keyframes pulse {
-      0%,100% { background:rgba(0,0,0,.62); }
-      50% { background:rgba(0,0,0,.42); }
-    }
+    @keyframes glow { 50% { filter:brightness(1.25); } }
+    @keyframes spin { to { transform: rotate(20deg) scale(1.08); } }
     .top { display:flex; justify-content:space-between; align-items:center; }
     .muted { color:#d7d7de; font-size:13px; }
     .fill { background:#7b5cff; color:#fff; border:0; border-radius:14px; padding:10px 14px; font-weight:700; }
     .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; }
-    .card { background:rgba(20,20,28,.82); border:0; border-radius:18px; padding:12px; color:#fff; text-align:left; }
+    .card { background:rgba(20,20,28,.86); border:0; border-radius:18px; padding:12px; color:#fff; text-align:left; }
     .page { display:none; }
     .page.on { display:block; }
     input { width:100%; box-sizing:border-box; margin:8px 0; padding:12px; border:0; border-radius:12px; background:#101018; color:#fff; }
-    .nav { position:fixed; left:0; right:0; bottom:0; background:rgba(18,18,24,.92); display:flex; padding:8px 0 12px; }
+    .nav { position:fixed; left:0; right:0; bottom:0; background:rgba(18,18,24,.94); display:flex; padding:8px 0 12px; }
     .nav button { flex:1; border:0; background:none; color:#9aa0b4; }
     .nav button.on { color:#fff; }
-    .ico { width:52px; height:52px; border-radius:14px; background:#2a2a32; display:flex; align-items:center; justify-content:center; margin-bottom:10px; }
-    .nav .ico { width:28px; height:28px; margin:0 auto 4px; background:transparent; }
-    svg { width:26px; height:26px; fill:#d7d7de; }
-    .nav svg { width:20px; height:20px; }
   </style>
 </head>
 <body>
   <div class="bg"></div>
-  <div class="dim"></div>
+  <div class="star"></div>
   <div class="top">
-    <div>
-      <div class="muted">Магазин</div>
-      <b>Stars Shop</b>
-    </div>
+    <div><div class="muted">Магазин</div><b>Stars Shop</b></div>
     <button class="fill" id="to-shop">Купить Stars</button>
   </div>
   <div id="home" class="page on">
     <div class="grid">
       <div class="card">
-        <div class="ico" id="i-bag"></div>
         <b>Gift Case</b>
         <div class="muted">59 ⭐</div>
         <button class="fill" id="open-case" style="width:100%;margin-top:10px">Открыть</button>
       </div>
       <div class="card">
-        <div class="ico" id="i-star"></div>
         <b>Stars</b>
         <div class="muted">покупка за крипту</div>
         <button class="fill" id="to-shop-2" style="width:100%;margin-top:10px">Купить</button>
@@ -72,31 +60,21 @@
   </div>
   <div id="shop" class="page">
     <div class="grid">
-      <button class="card" data-stars="50"><div class="ico starbox"></div><b>50 Stars</b><div class="muted">0.88 USDT</div></button>
-      <button class="card" data-stars="100"><div class="ico starbox"></div><b>100 Stars</b><div class="muted">1.75 USDT</div></button>
-      <button class="card" data-stars="250"><div class="ico starbox"></div><b>250 Stars</b><div class="muted">4.38 USDT</div></button>
-      <button class="card" data-prem="3"><div class="ico bagbox"></div><b>Premium 3</b><div class="muted">14.90 USDT</div></button>
+      <button class="card" data-stars="50"><b>50 Stars</b><div class="muted">0.88 USDT</div></button>
+      <button class="card" data-stars="100"><b>100 Stars</b><div class="muted">1.75 USDT</div></button>
+      <button class="card" data-stars="250"><b>250 Stars</b><div class="muted">4.38 USDT</div></button>
+      <button class="card" data-prem="3"><b>Premium 3</b><div class="muted">14.90 USDT</div></button>
     </div>
     <input id="custom" type="number" placeholder="Своё количество Stars">
     <input id="username" placeholder="username получателя">
     <button class="fill" id="pay-shop" style="width:100%">Оплатить криптой</button>
   </div>
   <div class="nav">
-    <button id="n1" class="on"><div class="ico" id="n-home"></div>Главная</button>
-    <button id="n2"><div class="ico" id="n-star"></div>Stars</button>
-    <button id="n3"><div class="ico" id="n-bag"></div>Кейсы</button>
+    <button id="n1" class="on">Главная</button>
+    <button id="n2">Stars</button>
+    <button id="n3">Кейсы</button>
   </div>
   <script>
-    const homeSvg = '<svg viewBox="0 0 24 24"><path d="M12 4 4 11h2v8h5v-6h2v6h5v-8h2z"/></svg>';
-    const starSvg = '<svg viewBox="0 0 24 24"><path d="M12 3l2.6 6.3L21 10l-4.5 4.1L17.8 21 12 17.6 6.2 21l1.3-6.9L3 10l6.4-.7z"/></svg>';
-    const bagSvg = '<svg viewBox="0 0 24 24"><path d="M8 7V6a4 4 0 0 1 8 0v1h3v13H5V7h3zm2 0h4V6a2 2 0 0 0-4 0v1z"/></svg>';
-    document.getElementById("i-bag").innerHTML = bagSvg;
-    document.getElementById("i-star").innerHTML = starSvg;
-    document.getElementById("n-home").innerHTML = homeSvg;
-    document.getElementById("n-star").innerHTML = starSvg;
-    document.getElementById("n-bag").innerHTML = bagSvg;
-    document.querySelectorAll(".starbox").forEach(el => el.innerHTML = starSvg);
-    document.querySelectorAll(".bagbox").forEach(el => el.innerHTML = bagSvg);
     const BOT_USERNAME = "Frckwqstarts_bot";
     const tg = window.Telegram && window.Telegram.WebApp;
     if (tg) { tg.ready(); tg.expand(); }
