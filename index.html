@@ -1,119 +1,336 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stars Shop</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    body { margin:0; font-family:Arial,sans-serif; color:#fff; padding:12px 12px 86px; background:#07070a; }
-    .bg {
-      position:fixed; inset:0; z-index:-1;
-      background:
-        radial-gradient(circle at 50% 30%, rgba(255,170,40,.28), transparent 42%),
-        radial-gradient(circle at 50% 55%, rgba(255,120,0,.12), #07070a 70%);
-      animation: glow 4s ease-in-out infinite;
-    }
-    .star {
-      position:fixed; left:50%; top:18%;
-      width:220px; height:220px; margin-left:-110px; z-index:-1;
-      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-      background: linear-gradient(180deg,#ffd36a,#f59e0b);
-      opacity:.35;
-      animation: spin 16s linear infinite;
-    }
-    @keyframes glow { 50% { filter:brightness(1.25); } }
-    @keyframes spin { to { transform: rotate(20deg) scale(1.08); } }
-    .top { display:flex; justify-content:space-between; align-items:center; }
-    .muted { color:#d7d7de; font-size:13px; }
-    .fill { background:#7b5cff; color:#fff; border:0; border-radius:14px; padding:10px 14px; font-weight:700; }
-    .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; }
-    .card { background:rgba(20,20,28,.86); border:0; border-radius:18px; padding:12px; color:#fff; text-align:left; }
-    .page { display:none; }
-    .page.on { display:block; }
-    input { width:100%; box-sizing:border-box; margin:8px 0; padding:12px; border:0; border-radius:12px; background:#101018; color:#fff; }
-    .nav { position:fixed; left:0; right:0; bottom:0; background:rgba(18,18,24,.94); display:flex; padding:8px 0 12px; }
-    .nav button { flex:1; border:0; background:none; color:#9aa0b4; }
-    .nav button.on { color:#fff; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Stars & Premium</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{
+  --bg:#ffffff; --bg2:#f1f3f5; --text:#111418; --hint:#7d8790; --accent:#2481cc; --accent-text:#ffffff;
+  --danger:#e5484d; --ok:#34a853; --star:#f5a623;
+  --border:color-mix(in srgb,var(--hint) 28%,transparent);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:16px}
+body{min-height:100vh;padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+.warn{background:#ffb020;color:#111;font-size:13px;text-align:center;padding:8px 12px;display:none}
+.top{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border)}
+.top h1{font-size:19px;font-weight:700}
+.chip{background:var(--bg2);border-radius:99px;padding:6px 12px;font-weight:700;font-size:14px;white-space:nowrap;display:none}
+.chip i{font-style:normal;color:var(--star)}
+.chip small{font-weight:400;color:var(--hint);font-size:12px}
+main{padding:16px}
+h2{font-size:15px;font-weight:600;margin:18px 0 10px}
+.muted{color:var(--hint);font-size:13px}
+.lbl{display:block;font-size:13px;color:var(--hint);margin:12px 0 6px}
+
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;display:flex;background:var(--bg);border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom)}
+.tab{flex:1;background:none;border:none;color:var(--hint);padding:9px 2px 10px;font-size:11.5px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-family:inherit}
+.tab .ic{font-size:21px;line-height:1}
+.tab.on{color:var(--accent);font-weight:600}
+
+.btn{background:var(--accent);color:var(--accent-text);border:none;border-radius:12px;padding:14px 16px;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;width:100%}
+.btn:active{opacity:.85}
+.btn.sec{background:var(--bg2);color:var(--text)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+input[type=text],input[type=number]{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);border-radius:12px;padding:12px;font-size:16px;font-family:inherit;outline:none}
+input:focus{border-color:var(--accent)}
+
+.seg{display:flex;background:var(--bg2);border-radius:12px;padding:3px;margin-bottom:14px}
+.seg button{flex:1;border:none;background:none;color:var(--hint);padding:10px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+.seg button.on{background:var(--bg);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+
+.hero{border-radius:16px;padding:16px;margin-bottom:14px;color:#fff;background:linear-gradient(135deg,#ffb020,#ff7a18)}
+.hero.purple{background:linear-gradient(135deg,#7c4dff,#3b82f6)}
+.hero.green{background:linear-gradient(135deg,#2fa86a,#3b82f6)}
+.hero b{display:block;font-size:20px}
+.hero span{font-size:13px;opacity:.92}
+
+.packs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pack{background:var(--bg2);border:2px solid transparent;border-radius:14px;padding:12px;cursor:pointer}
+.pack.sel{border-color:var(--accent)}
+.pack .amt{font-size:20px;font-weight:700}
+.pack .prc{font-size:14px;margin-top:2px}
+.pack .per{font-size:12px;color:var(--hint)}
+
+.plan{display:flex;align-items:center;gap:12px;background:var(--bg2);border:2px solid transparent;border-radius:14px;padding:14px;margin-bottom:8px;cursor:pointer}
+.plan.sel{border-color:var(--accent)}
+.radio{width:22px;height:22px;border-radius:50%;border:2px solid var(--hint);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.sel>.radio{border-color:var(--accent)}
+.sel>.radio::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.plan .pi{flex:1}
+.plan .pp{text-align:right;font-weight:700;font-size:15px}
+.plan .pp small{display:block;font-weight:400;color:var(--hint);font-size:12px}
+.save{background:var(--ok);color:#fff;font-size:11px;font-weight:700;border-radius:99px;padding:2px 8px;margin-left:6px}
+.feat{list-style:none;margin:6px 0 16px}
+.feat li{display:flex;gap:10px;padding:8px 0;font-size:14px;border-bottom:1px solid var(--border)}
+.feat li:last-child{border:none}
+
+.casebox{text-align:center;background:var(--bg2);border-radius:18px;padding:22px 16px;margin-bottom:6px}
+.cemoji{font-size:84px;line-height:1.1}
+.ctitle{font-size:19px;font-weight:700;margin:4px 0}
+.odd{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:14px}
+.odd .ol{width:86px;flex-shrink:0}
+.odd .ob{flex:1;height:8px;border-radius:99px;background:var(--bg2);overflow:hidden}
+.odd .ob div{height:100%;background:var(--accent);border-radius:99px}
+.odd .op{width:40px;text-align:right;font-weight:700}
+
+.box{background:var(--bg2);border-radius:14px;padding:12px 14px;margin:12px 0;font-size:14px;line-height:1.4}
+.linkbox{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;word-break:break-all;background:var(--bg2);border-radius:12px;padding:12px;margin-bottom:10px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px}
+.sbox{background:var(--bg2);border-radius:14px;padding:12px 8px;text-align:center}
+.sbox b{display:block;font-size:19px;margin-top:2px}
+.prof{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.ava{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#6ab3ff,#7c4dff);color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;flex-shrink:0;overflow:hidden}
+.ava img{width:100%;height:100%;object-fit:cover}
+.steps{list-style:none;counter-reset:s}
+.steps li{counter-increment:s;display:flex;gap:12px;padding:9px 0;font-size:14px;line-height:1.35}
+.steps li::before{content:counter(s);flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--accent-text);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center}
+
+.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:20;display:none;align-items:flex-end}
+.sheet-bg.show{display:flex}
+.sheet{width:100%;background:var(--bg);border-radius:20px 20px 0 0;padding:14px 16px calc(20px + env(safe-area-inset-bottom));max-height:90vh;overflow-y:auto}
+.grab{width:40px;height:4px;background:var(--border);border-radius:9px;margin:0 auto 14px}
+.sum{text-align:center;margin-bottom:6px}
+.sum b{display:block;font-size:28px;margin:2px 0}
+.toast{position:fixed;left:50%;top:70px;transform:translate(-50%,-20px);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;transition:.25s;pointer-events:none;z-index:50;max-width:92%;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
 </head>
 <body>
-  <div class="bg"></div>
-  <div class="star"></div>
-  <div class="top">
-    <div><div class="muted">Магазин</div><b>Stars Shop</b></div>
-    <button class="fill" id="to-shop">Купить Stars</button>
-  </div>
-  <div id="home" class="page on">
-    <div class="grid">
-      <div class="card">
-        <b>Gift Case</b>
-        <div class="muted">59 ⭐</div>
-        <button class="fill" id="open-case" style="width:100%;margin-top:10px">Открыть</button>
-      </div>
-      <div class="card">
-        <b>Stars</b>
-        <div class="muted">покупка за крипту</div>
-        <button class="fill" id="to-shop-2" style="width:100%;margin-top:10px">Купить</button>
-      </div>
-    </div>
-  </div>
-  <div id="shop" class="page">
-    <div class="grid">
-      <button class="card" data-stars="50"><b>50 Stars</b><div class="muted">0.88 USDT</div></button>
-      <button class="card" data-stars="100"><b>100 Stars</b><div class="muted">1.75 USDT</div></button>
-      <button class="card" data-stars="250"><b>250 Stars</b><div class="muted">4.38 USDT</div></button>
-      <button class="card" data-prem="3"><b>Premium 3</b><div class="muted">14.90 USDT</div></button>
-    </div>
-    <input id="custom" type="number" placeholder="Своё количество Stars">
-    <input id="username" placeholder="username получателя">
-    <button class="fill" id="pay-shop" style="width:100%">Оплатить криптой</button>
-  </div>
-  <div class="nav">
-    <button id="n1" class="on">Главная</button>
-    <button id="n2">Stars</button>
-    <button id="n3">Кейсы</button>
-  </div>
-  <script>
-    const BOT_USERNAME = "Frckwqstarts_bot";
-    const tg = window.Telegram && window.Telegram.WebApp;
-    if (tg) { tg.ready(); tg.expand(); }
-    let order = { product: "stars", amount: 50 };
-    function show(id) {
-      document.getElementById("home").classList.toggle("on", id === "home");
-      document.getElementById("shop").classList.toggle("on", id === "shop");
-      document.getElementById("n1").classList.toggle("on", id === "home");
-      document.getElementById("n2").classList.toggle("on", id === "shop");
-      document.getElementById("n3").classList.toggle("on", id === "home");
-    }
-    function go(start) {
-      const url = "https://t.me/" + BOT_USERNAME + "?start=" + start;
-      if (tg && tg.openTelegramLink) tg.openTelegramLink(url);
-      else window.location.href = url;
-    }
-    document.getElementById("n1").onclick = () => show("home");
-    document.getElementById("n2").onclick = () => show("shop");
-    document.getElementById("n3").onclick = () => show("home");
-    document.getElementById("to-shop").onclick = () => show("shop");
-    document.getElementById("to-shop-2").onclick = () => show("shop");
-    document.getElementById("open-case").onclick = () => go("c_gift_me");
-    document.querySelectorAll("#shop .card").forEach(btn => {
-      btn.onclick = () => {
-        if (btn.dataset.stars) order = { product: "stars", amount: Number(btn.dataset.stars) };
-        else order = { product: "premium", months: Number(btn.dataset.prem) };
-      };
+<div class="warn" id="warn"></div>
+<header class="top"><h1 id="hTitle">Магазин</h1><div class="chip" id="hChip"><i>⭐</i> <span id="hBonus"></span> <small>бонус</small></div></header>
+<main id="view"></main>
+
+<nav class="tabs">
+  <button class="tab on" data-t="shop"><span class="ic">🛒</span>Магазин</button>
+  <button class="tab" data-t="case"><span class="ic">🎁</span>Кейс</button>
+  <button class="tab" data-t="refs"><span class="ic">👥</span>Рефералы</button>
+  <button class="tab" data-t="profile"><span class="ic">👤</span>Профиль</button>
+</nav>
+
+<div class="sheet-bg" id="shBg"><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ====================== НАСТРОЙКИ ======================
+   Значения должны совпадать с настройками бота (цены пересчитывает и сам бот,
+   поэтому подмена здесь ни на что не влияет: бот берёт только товар и количество). */
+const CFG = {
+  BOT_USERNAME: 'Frckwqstarts_bot',           // без @
+  STAR_PRICE_USDT: 0.0175,                    // цена 1 Stars в USDT
+  PREMIUM_USDT: {3: 14.90, 6: 19.90, 12: 35.90},
+  USDT_RUB: 95,
+  PACKS: [50, 100, 250, 500, 1000, 2500],     // быстрые пакеты Stars
+  MIN_STARS: 50,
+  MAX_STARS: 100000,
+  CASE_PRICE: 59,
+  REF_BONUS: 15,
+  CASE_ODDS: [                                // держите в синхроне с pick_gift() в боте
+    {label:'До 25 ⭐', pct:80},
+    {label:'26–59 ⭐', pct:18},
+    {label:'100 ⭐',   pct:2}
+  ],
+  SHARE_TEXT: 'Stars и Premium в боте'
+};
+/* ======================================================== */
+
+const tg = window.Telegram && window.Telegram.WebApp;
+const user = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) || null;
+const inTg = !!user;
+/* sendData работает только если мини-апп открыт кнопкой клавиатуры (KeyboardButton web_app).
+   При запуске из inline-кнопки в initData есть query_id, тогда отправить данные боту нельзя. */
+const canSend = inTg && !(tg.initDataUnsafe && tg.initDataUnsafe.query_id);
+
+/* необязательно: бот может открыть мини-апп как ...?b=<бонус>&i=<приглашено> */
+const qs = new URLSearchParams(location.search);
+const bonus = qs.has('b') ? parseInt(qs.get('b'), 10) : null;
+const invited = qs.has('i') ? parseInt(qs.get('i'), 10) : null;
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = n => Number(n).toLocaleString('ru-RU');
+const usd = n => Number(n).toFixed(2);
+const r2 = x => Math.round((x + Number.EPSILON) * 100) / 100;
+const starsUsdt = n => r2(n * CFG.STAR_PRICE_USDT);
+const rub = u => Math.round(u * CFG.USDT_RUB);
+
+let tab = 'shop', shopTab = 'stars', selStars = 500, selMonths = 6, customVal = '';
+const TITLES = {shop:'Магазин', case:'Кейс', refs:'Рефералы', profile:'Профиль'};
+
+/* ---------- Telegram ---------- */
+function applyTheme(){
+  if (!tg) return;
+  const p = tg.themeParams || {}, s = document.documentElement.style;
+  const map = {'--bg':p.bg_color,'--bg2':p.secondary_bg_color,'--text':p.text_color,'--hint':p.hint_color,
+    '--accent':p.button_color,'--accent-text':p.button_text_color,'--danger':p.destructive_text_color};
+  for (const k in map) if (map[k]) s.setProperty(k, map[k]);
+}
+if (tg){ tg.ready(); tg.expand(); applyTheme(); tg.onEvent('themeChanged', applyTheme); }
+
+function openLink(url){
+  if (tg && /^https:\/\/t\.me\//.test(url) && tg.openTelegramLink) tg.openTelegramLink(url);
+  else if (tg && tg.openLink) tg.openLink(url);
+  else window.open(url, '_blank');
+}
+
+/* Отправка действия боту. Мини-апп после этого закрывается, дальше диалог идёт в чате. */
+function send(payload){
+  if (!inTg){ toast('Откройте мини-апп внутри Telegram'); return; }
+  if (!canSend){ toast('Откройте магазин кнопкой «🛒 Магазин» внизу чата с ботом'); return; }
+  try { tg.sendData(JSON.stringify(payload)); }
+  catch(e){ toast('Не удалось отправить, попробуйте ещё раз'); }
+}
+
+/* ---------- UI helpers ---------- */
+function toast(msg){
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 2800);
+}
+function showSheet(html){ $('sheet').innerHTML = '<div class="grab"></div>' + html; $('shBg').classList.add('show'); }
+function closeSheet(){ $('shBg').classList.remove('show'); }
+$('shBg').addEventListener('click', e => { if (e.target === $('shBg')) closeSheet(); });
+
+function setTab(t){
+  tab = t;
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+  $('hTitle').textContent = TITLES[t];
+  ({shop:viewShop, case:viewCase, refs:viewRefs, profile:viewProfile})[t]();
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => setTab(b.dataset.t)));
+
+/* ---------- магазин ---------- */
+function viewShop(){
+  let h = '<div class="seg" id="segShop"><button data-s="stars" class="' + (shopTab === 'stars' ? 'on' : '') + '">⭐ Stars</button>' +
+          '<button data-s="premium" class="' + (shopTab === 'premium' ? 'on' : '') + '">👑 Premium</button></div>';
+  if (shopTab === 'stars'){
+    h += '<div class="hero"><b>Telegram Stars ⭐</b><span>Отправим на ваш username после оплаты.</span></div><div class="packs">' +
+      CFG.PACKS.map(n => { const u = starsUsdt(n);
+        return '<div class="pack' + (!customVal && selStars === n ? ' sel' : '') + '" data-a="' + n + '"><div class="amt">⭐ ' + fmt(n) + '</div>' +
+               '<div class="prc">' + usd(u) + ' USDT</div><div class="per">≈ ' + fmt(rub(u)) + ' ₽</div></div>'; }).join('') + '</div>' +
+      '<h2>Своё количество</h2>' +
+      '<input type="number" id="cust" inputmode="numeric" placeholder="От ' + CFG.MIN_STARS + ' до ' + fmt(CFG.MAX_STARS) + '" value="' + esc(customVal) + '">' +
+      '<div class="muted" id="custHint" style="margin:6px 0 14px"></div>' +
+      '<button class="btn" id="goStars">Оформить</button>';
+  } else {
+    const p0 = CFG.PREMIUM_USDT, months = Object.keys(p0).map(Number).sort((a, b) => a - b), base = p0[months[0]] / months[0];
+    h += '<div class="hero purple"><b>Telegram Premium 👑</b><span>Больше возможностей. Активируем на ваш username.</span></div>' +
+      months.map(m => { const u = p0[m], per = u / m, save = Math.round((1 - per / base) * 100);
+        return '<div class="plan' + (selMonths === m ? ' sel' : '') + '" data-m="' + m + '"><div class="radio"></div><div class="pi"><b>' + m + ' мес.</b>' +
+          (save > 0 ? '<span class="save">−' + save + '%</span>' : '') + '<div class="muted">' + usd(per) + ' USDT в месяц</div></div>' +
+          '<div class="pp">' + usd(u) + ' USDT<small>≈ ' + fmt(rub(u)) + ' ₽</small></div></div>'; }).join('') +
+      '<ul class="feat"><li><span>🚀</span><span>Ускоренная загрузка файлов</span></li><li><span>🎙</span><span>Расшифровка голосовых</span></li>' +
+      '<li><span>🚫</span><span>Без рекламы в каналах</span></li><li><span>😀</span><span>Эксклюзивные стикеры и реакции</span></li>' +
+      '<li><span>📁</span><span>Файлы до 4 ГБ</span></li></ul><button class="btn" id="goPrem">Оформить</button>';
+  }
+  $('view').innerHTML = h;
+
+  document.querySelectorAll('#segShop button').forEach(b => b.addEventListener('click', () => { shopTab = b.dataset.s; viewShop(); }));
+  if (shopTab === 'stars'){
+    document.querySelectorAll('.pack').forEach(el => el.addEventListener('click', () => { selStars = +el.dataset.a; customVal = ''; viewShop(); }));
+    const cust = $('cust'), hint = $('custHint');
+    cust.addEventListener('input', () => {
+      customVal = cust.value;
+      document.querySelectorAll('.pack').forEach(x => x.classList.toggle('sel', !customVal && +x.dataset.a === selStars));
+      const n = parseInt(customVal, 10);
+      if (!customVal){ hint.textContent = ''; return; }
+      if (!(n >= CFG.MIN_STARS && n <= CFG.MAX_STARS)){ hint.textContent = 'Введите число от ' + CFG.MIN_STARS + ' до ' + fmt(CFG.MAX_STARS); return; }
+      const u = starsUsdt(n); hint.textContent = 'К оплате ≈ ' + usd(u) + ' USDT (≈ ' + fmt(rub(u)) + ' ₽)';
     });
-    document.getElementById("pay-shop").onclick = () => {
-      const custom = Number(document.getElementById("custom").value);
-      if (custom) {
-        if (custom < 50) return alert("Минимум 50 Stars");
-        order = { product: "stars", amount: custom };
-      }
-      const username = document.getElementById("username").value.trim().replace("@", "");
-      if (!username) return alert("Напиши username");
-      if (order.product === "premium") go("p_" + order.months + "_" + username);
-      else go("s_" + order.amount + "_" + username);
-    };
-  </script>
+    $('goStars').addEventListener('click', () => {
+      const n = customVal ? parseInt(customVal, 10) : selStars;
+      if (!(n >= CFG.MIN_STARS && n <= CFG.MAX_STARS)) return toast('Введите число от ' + CFG.MIN_STARS + ' до ' + fmt(CFG.MAX_STARS));
+      openOrder({p:'stars', n:n});
+    });
+  } else {
+    document.querySelectorAll('.plan').forEach(el => el.addEventListener('click', () => { selMonths = +el.dataset.m; viewShop(); }));
+    $('goPrem').addEventListener('click', () => openOrder({p:'premium', mo:selMonths}));
+  }
+}
+
+function openOrder(item){
+  const isStars = item.p === 'stars';
+  const u = isStars ? starsUsdt(item.n) : CFG.PREMIUM_USDT[item.mo];
+  const title = isStars ? fmt(item.n) + ' Stars' : 'Premium · ' + item.mo + ' мес.';
+  showSheet(
+    '<div class="sum"><div class="muted">' + esc(title) + '</div><b>' + usd(u) + ' USDT</b><div class="muted">≈ ' + fmt(rub(u)) + ' ₽</div></div>' +
+    '<label class="lbl">Username получателя</label>' +
+    '<input type="text" id="uName" placeholder="username без @" value="' + esc(user && user.username ? user.username : '') + '" maxlength="33" autocapitalize="off" autocomplete="off" spellcheck="false">' +
+    '<div class="muted" style="margin-top:6px">Товар придёт на этот аккаунт. Проверьте написание.</div>' +
+    '<div class="box">Оплата: 🪙 CryptoBot (USDT) или 💳 Банка (СБП / карта). Способ выберете в чате с ботом, после этого придёт счёт.</div>' +
+    '<button class="btn" id="goChat">Продолжить в чате</button>');
+  $('goChat').addEventListener('click', () => {
+    const name = $('uName').value.trim().replace(/^@/, '');
+    if (!/^[A-Za-z0-9_]{5,32}$/.test(name)) return toast('Username: 5–32 символа, латиница, цифры и _');
+    send(Object.assign({a:'order', u:name}, item));
+  });
+}
+
+/* ---------- кейс ---------- */
+function viewCase(){
+  $('view').innerHTML =
+    '<div class="casebox"><div class="cemoji">🎁</div><div class="ctitle">Gift Case</div>' +
+    '<div class="muted">Случайный обычный подарок Telegram. Придёт в ваш профиль.</div></div>' +
+    '<h2>Шансы выпадения</h2>' +
+    CFG.CASE_ODDS.map(o => '<div class="odd"><span class="ol">' + esc(o.label) + '</span><span class="ob"><div style="width:' + o.pct + '%"></div></span><span class="op">' + o.pct + '%</span></div>').join('') +
+    '<div class="muted" style="margin-bottom:12px">Подарок выбирается случайно: его стоимость может быть ниже цены кейса.</div>' +
+    '<button class="btn" id="caseBtn">Открыть за ' + CFG.CASE_PRICE + ' ⭐</button>' +
+    '<div class="muted" style="margin-top:10px;text-align:center">Счёт в Telegram Stars придёт в чат. Бонусные ⭐ за рефералов тоже подходят, их бот спишет сам.</div>';
+  $('caseBtn').addEventListener('click', () => send({a:'case'}));
+}
+
+/* ---------- рефералы ---------- */
+function refLink(){ return 'https://t.me/' + CFG.BOT_USERNAME + '?start=ref_' + (user ? user.id : ''); }
+function viewRefs(){
+  let h = '<div class="hero green"><b>Приглашайте друзей 👥</b><span>За каждую оплату друга вы получаете +' + CFG.REF_BONUS + ' ⭐ бонусом.</span></div>';
+  if (bonus !== null || invited !== null)
+    h += '<div class="stats"><div class="sbox"><span class="muted">Приглашено</span><b>' + (invited !== null ? fmt(invited) : '—') + '</b></div>' +
+         '<div class="sbox"><span class="muted">Бонусный баланс</span><b>⭐ ' + (bonus !== null ? fmt(bonus) : '—') + '</b></div></div>';
+  if (user){
+    h += '<h2>Ваша ссылка</h2><div class="linkbox">' + esc(refLink()) + '</div>' +
+         '<div class="two"><button class="btn sec" id="rCopy">Копировать</button><button class="btn" id="rShare">Поделиться</button></div>' +
+         '<button class="btn sec" id="rChat" style="margin-top:8px">Баланс и приглашённые в чате</button>';
+  } else h += '<div class="box">Откройте мини-апп внутри Telegram, чтобы получить свою реферальную ссылку.</div>';
+  h += '<p class="muted" style="margin-top:14px">Бонусные ⭐ можно потратить на открытие кейсов.</p>';
+  $('view').innerHTML = h;
+  if (!user) return;
+  $('rCopy').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(refLink()); toast('Ссылка скопирована'); }
+    catch(e){ toast('Не удалось скопировать, выделите ссылку вручную'); }
+  });
+  $('rShare').addEventListener('click', () => openLink('https://t.me/share/url?url=' + encodeURIComponent(refLink()) + '&text=' + encodeURIComponent(CFG.SHARE_TEXT)));
+  $('rChat').addEventListener('click', () => send({a:'ref'}));
+}
+
+/* ---------- профиль ---------- */
+function viewProfile(){
+  const name = user ? ((user.first_name || '') + ' ' + (user.last_name || '')).trim() : 'Гость';
+  const initial = (name || (user && user.username) || '?').charAt(0).toUpperCase();
+  const photo = user && user.photo_url && /^https:\/\//.test(user.photo_url) ? user.photo_url : '';
+  $('view').innerHTML =
+    '<div class="prof"><div class="ava">' + (photo ? '<img src="' + esc(photo) + '" alt="">' : esc(initial)) + '</div>' +
+    '<div><b style="font-size:18px">' + esc(name || 'Без имени') + '</b><div class="muted">' + (user && user.username ? '@' + esc(user.username) : 'без username') + (user ? ' · ID ' + user.id : '') + '</div></div></div>' +
+    (bonus !== null || invited !== null ? '<div class="stats"><div class="sbox"><span class="muted">Бонус</span><b>⭐ ' + (bonus !== null ? fmt(bonus) : '—') + '</b></div>' +
+      '<div class="sbox"><span class="muted">Друзей</span><b>' + (invited !== null ? fmt(invited) : '—') + '</b></div></div>' : '') +
+    '<h2>Как это работает</h2><ol class="steps"><li>Выберите товар и укажите username получателя.</li>' +
+    '<li>Мини-апп передаст заказ боту, и вы вернётесь в чат.</li><li>Выберите оплату: CryptoBot или Банка, и оплатите счёт.</li>' +
+    '<li>Бот сам отправит товар и напишет, когда всё готово.</li></ol>';
+}
+
+/* ---------- старт ---------- */
+if (inTg && !canSend){
+  const w = $('warn');
+  w.textContent = 'Чтобы оформить заказ, откройте магазин кнопкой «🛒 Магазин» внизу чата с ботом.';
+  w.style.display = 'block';
+}
+if (bonus !== null){ $('hBonus').textContent = fmt(bonus); $('hChip').style.display = 'block'; }
+setTab('shop');
+})();
+</script>
 </body>
 </html>
