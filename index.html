@@ -298,7 +298,7 @@ $('#dico').innerHTML=CI(0);renderCases();sync();updDaily();
 var TG=window.Telegram&&Telegram.WebApp,LIVE=!!(TG&&TG.initData),API='',API_URL='';/* API_URL: постоянный адрес API, если есть свой домен */
 if(LIVE){
  var qp=new URLSearchParams(location.search).get('api')||'';
- API=API_URL||(/^https:\/\/[a-z0-9-]+\.trycloudflare\.com$/.test(qp)?qp:'');
+ API=API_URL||(/^https:\/\/[a-z0-9-]+\.(trycloudflare\.com|lhr\.life)$/.test(qp)?qp:'');
  try{TG.ready();TG.expand()}catch(e){}
  document.body.classList.add('lv');
  var ME=null,RATE=1.7,POLL=null;
