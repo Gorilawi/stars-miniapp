@@ -2,6 +2,7 @@
 <html lang="ru"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Stars Shop — демо мини-аппа</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0d1220;--panel:#161d31;--p2:#1e2740;--line:#2a3555;--text:#e8eefb;--mute:#8b97b8;--gold:#ffc53d;--gi:#2b1f00;--ton:#2aa3ff;--ok:#4ade80;--bad:#f87171;--r1:#8b97b8;--r2:#2aa3ff;--r3:#a78bfa;--r4:#ffc53d;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -124,6 +125,9 @@ nav button{flex:1;padding:11px 0 9px;font-size:12px;color:var(--mute);display:fl
 .btn:not(.g){background:linear-gradient(90deg,#ffd21f,#f59e0b)!important;box-shadow:0 6px 18px rgba(245,158,11,.3)}
 .case{border:1.5px solid rgba(255,197,61,.35)!important}.case .pr{display:inline-flex;align-items:center;gap:5px;background:#0b0b10;border-radius:9px;padding:3px 9px;color:#ffd24a}
 .drop{border:1px solid rgba(255,197,61,.3)}.gi img{width:100%;height:100%;object-fit:contain}
+.inp{width:100%;background:var(--p2);border:1px solid var(--line);border-radius:12px;padding:13px;margin-bottom:10px;font-size:15px}
+.lv .ban,.lv .daily,.lv #feed,.lv #feedh,.lv #chips,.lv #promoh,.lv .promo,.lv #invh,.lv #inv,.lv #onlw{display:none}
+.wait{width:34px;height:34px;border-radius:50%;border:4px solid var(--line);border-top-color:var(--gold);margin:6px auto 14px;animation:spin2 1s linear infinite}@keyframes spin2{to{transform:rotate(360deg)}}
 </style></head><body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe38a"/><stop offset="1" stop-color="#ff9f1c"/></linearGradient>
@@ -165,7 +169,7 @@ nav button{flex:1;padding:11px 0 9px;font-size:12px;color:var(--mute);display:fl
 <rect x="22" y="78" width="116" height="82" rx="10" fill="url(#bx)"/><rect x="22" y="132" width="116" height="28" rx="10" fill="#1d0f6b" opacity=".25"/><rect x="28" y="84" width="10" height="68" rx="5" fill="#fff" opacity=".14"/><rect x="70" y="78" width="20" height="82" fill="url(#gold)"/>
 <g class="lid"><rect x="12" y="54" width="136" height="30" rx="9" fill="url(#lidg)"/><rect x="18" y="58" width="124" height="6" rx="3" fill="#fff" opacity=".22"/><rect x="70" y="54" width="20" height="30" fill="url(#gold)"/>
 <path d="M80 54C56 22 30 36 48 54 60 64 74 60 80 54z" fill="url(#gold)"/><path d="M80 54C104 22 130 36 112 54 100 64 86 60 80 54z" fill="url(#gold)"/><path d="M60 46c-6-4-10-3-8 1" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="2"/><circle cx="80" cy="53" r="8" fill="#ffb21f"/><circle cx="77" cy="50" r="3" fill="#fff" opacity=".5"/></g></svg></div><h1>Stars Shop</h1><div class="tag">Звёзды, Premium и подарки</div><div class="bar"><i></i></div><div class="skip">Нажми, чтобы пропустить</div></div>
-<header><div><h1>Stars Shop</h1><div class="sub"><span class="live"></span><span id="onl">1 284</span> онлайн</div></div>
+<header><div><h1>Stars Shop</h1><div class="sub" id="onlw"><span class="live"></span><span id="onl">1 284</span> онлайн</div></div>
 <div class="bal"><svg class="si" viewBox="0 0 48 48"><use href="#s-star"/></svg> <b id="bal">150</b><button data-top aria-label="Пополнить">+</button></div></header>
 
 <section class="tab on" id="t-shop">
@@ -173,7 +177,7 @@ nav button{flex:1;padding:11px 0 9px;font-size:12px;color:var(--mute);display:fl
   <h2>Свой объём Stars</h2>
   <div class="calc"><div class="tot"><span id="cs">⭐ 250</span><span id="cp" style="color:var(--gold)">425 ₽</span></div>
   <input type="range" id="rng" min="50" max="5000" step="50" value="250" aria-label="Количество Stars">
-  <div class="sub">От 50 до 5 000. Курс: 1,7 ₽ за звезду</div><button class="btn" id="cb">Купить</button></div>
+  <div class="sub">От 50 до 5 000 звёзд</div><button class="btn" id="cb">Купить</button></div>
   <h2>Готовые пакеты</h2><div class="grid" id="stars"></div>
   <h2>Telegram Premium</h2><div class="grid" id="prem"></div>
   <div class="perks"><span>🚀 Быстрая загрузка</span><span>🎙 Голос в текст</span><span>🌟 Эмодзи и стикеры</span><span>📁 Файлы до 4 ГБ</span></div>
@@ -182,17 +186,17 @@ nav button{flex:1;padding:11px 0 9px;font-size:12px;color:var(--mute);display:fl
 
 <section class="tab" id="t-cases">
   <div class="daily"><div class="ico" id="dico"></div><div class="x"><b>Ежедневный кейс</b><span class="sub" id="dsub">Бесплатно раз в сутки</span></div><button id="dbtn">Открыть</button></div>
-  <h2><span class="live"></span>Последние выигрыши</h2><div class="feed" id="feed"></div>
+  <h2 id="feedh"><span class="live"></span>Последние выигрыши</h2><div class="feed" id="feed"></div>
   <div class="chips" id="chips"></div><div id="caselist"></div>
 </section>
 
 <section class="tab" id="t-prof">
   <div class="me"><div class="av">А</div><div style="flex:1"><b style="font-size:18px">Алекс</b><div class="sub">ID 12345678 · <span id="lvl">Уровень 1</span></div><div class="xp"><div id="xpb"></div></div></div></div>
   <div class="st"><div><b id="sb">150</b><span>Баланс ⭐</span></div><div><b id="so">0</b><span>Кейсов</span></div><div><b id="ss">0</b><span>Выиграно ⭐</span></div></div>
-  <h2>Инвентарь</h2><div class="inv" id="inv"></div>
+  <h2 id="invh">Инвентарь</h2><div class="inv" id="inv"></div>
   <h2>Рефералы</h2>
   <div class="ref"><b>5% с покупок друзей</b><div class="sub">Приглашено: 7 · Заработано: 86 ⭐</div><code>t.me/your_bot?start=ref_12345</code><button class="btn g" id="copy">Скопировать ссылку</button></div>
-  <h2>Промокод</h2><div class="promo"><input id="pi" placeholder="Например, PREM15" aria-label="Промокод"><button id="pb">Применить</button></div>
+  <h2 id="promoh">Промокод</h2><div class="promo"><input id="pi" placeholder="Например, PREM15" aria-label="Промокод"><button id="pb">Применить</button></div>
   <h2>Настройки</h2>
   <div class="sw"><span>Быстрое открытие кейсов</span><button class="tg" id="fast" aria-label="Быстрое открытие"></button></div>
   <div class="sw"><span>Светлая тема</span><button class="tg" id="thm" aria-label="Тема"></button></div>
@@ -227,7 +231,7 @@ function sync(){$('#bal').textContent=fmt(S.bal);$('#sb').textContent=fmt(S.bal)
  var l=Math.floor(S.xp/100)+1;$('#lvl').textContent='Уровень '+l;$('#xpb').style.width=(S.xp%100)+'%';
  $('#inv').innerHTML=S.inv.length?S.inv.map(function(p,i){return '<button class="r'+p.r+'" data-inv="'+i+'">'+G(p.e)+'<small>'+p.n+' · '+p.v+'⭐</small></button>'}).join(''):'<div class="empty">Пока пусто. Открой кейс, и подарок появится здесь.</div>';
  $('#hist').innerHTML=S.hist.length?S.hist.slice(0,12).map(function(h){return '<div class="row"><span>'+h[0]+'</span><span class="'+(h[1][0]==='+'?'pl':'')+'">'+h[1]+'</span></div>'}).join(''):'<div class="row"><span>Операций пока нет</span><span></span></div>'}
-function pay(title,rub){sheet('<h3>'+title+'</h3><p>К оплате '+fmt(rub)+' ₽. Выбери способ:</p><button class="pay" data-pay="Карта"><i><svg viewBox="0 0 48 48"><use href="#i-card"/></svg></i><div>Банковская карта<small>Visa, Mastercard, МИР</small></div></button><button class="pay" data-pay="Tonkeeper"><i><svg viewBox="0 0 48 48"><use href="#i-ton"/></svg></i><div>Tonkeeper<small>Оплата в TON · ≈ '+(rub/260).toFixed(2)+' TON</small></div><em>−3%</em></button><button class="pay" data-pay="CryptoBot"><i><svg viewBox="0 0 48 48"><use href="#i-bot"/></svg></i><div>CryptoBot<small>USDT, TON и другие</small></div></button><button class="btn g" data-shut>Отмена</button>');$('#sheet').dataset.t=title;$('#sheet').dataset.r=rub}
+function pay(title,rub){sheet('<h3>'+title+'</h3><p>К оплате '+fmt(rub)+' ₽. Выбери способ:</p><button class="pay" data-pay="Карта"><i><svg viewBox="0 0 48 48"><use href="#i-card"/></svg></i><div>Банковская карта<small>Visa, Mastercard, МИР</small></div></button><button class="pay" data-pay="CryptoBot"><i><svg viewBox="0 0 48 48"><use href="#i-bot"/></svg></i><div>CryptoBot<small>USDT, TON и другие</small></div></button><button class="btn g" data-shut>Отмена</button>');$('#sheet').dataset.t=title;$('#sheet').dataset.r=rub}
 $('#stars').innerHTML=STARS.map(function(s,i){return '<button class="card'+(s[2]?' hot':'')+'" data-st="'+i+'">'+(s[2]?'<span class="badge">−'+s[2]+'%</span>':'')+'<span class="big">'+SI+' '+s[0]+'</span><span class="sub">Звёзд на аккаунт</span><span class="price">'+s[1]+' ₽'+(s[2]?'<span class="old">'+Math.round(s[1]/(1-s[2]/100))+' ₽</span>':'')+'</span></button>'}).join('');
 $('#prem').innerHTML=PREM.map(function(s,i){return '<button class="card'+(s[2]>25?' hot':'')+'" data-pr="'+i+'">'+(s[2]?'<span class="badge">−'+s[2]+'%</span>':'')+'<span class="big">'+PM+' '+s[0].split(' ')[0]+'</span><span class="sub">'+s[0].split(' ')[1]+' Premium</span><span class="price">'+fmt(s[1])+' ₽</span></button>'}).join('');
 $('#faq').innerHTML=FAQ.map(function(f){return '<div class="faq"><button>'+f[0]+'<i>▾</i></button><p>'+f[1]+'</p></div>'}).join('');
@@ -290,4 +294,57 @@ for(var j=0;j<18;j++){var p=document.createElement('div');p.className='sp';p.sty
 var done=false;function hide(){if(done)return;done=true;sp.classList.add('out');setTimeout(function(){sp.remove()},600)}
 sp.addEventListener('click',hide);setTimeout(hide,3600)})();
 $('#dico').innerHTML=CI(0);renderCases();sync();updDaily();
+/* ===================== LIVE-режим: работает внутри Telegram с API бота ===================== */
+var TG=window.Telegram&&Telegram.WebApp,LIVE=!!(TG&&TG.initData),API='',API_URL='';/* API_URL: постоянный адрес API, если есть свой домен */
+if(LIVE){
+ var qp=new URLSearchParams(location.search).get('api')||'';
+ API=API_URL||(/^https:\/\/[a-z0-9-]+\.trycloudflare\.com$/.test(qp)?qp:'');
+ try{TG.ready();TG.expand()}catch(e){}
+ document.body.classList.add('lv');
+ var ME=null,RATE=1.7,POLL=null;
+ function api(p,b){return fetch(API+p,{method:b?'POST':'GET',headers:{'Content-Type':'application/json','X-Init-Data':TG.initData},body:b?JSON.stringify(b):undefined}).then(function(r){return r.json().then(function(j){j._s=r.status;return j})})}
+ function fatal(){sheet('<h3>Нет связи с магазином</h3><p>Закрой и открой магазин ещё раз через минуту.</p><button class="btn g" data-shut>Закрыть</button>')}
+ function needSub(url){sheet('<h3>Подпишись на канал</h3><p>Магазин работает для подписчиков канала.</p><button class="btn" id="subb">Подписаться</button><button class="btn g" id="subc">Я подписался</button>');
+  $('#subb').onclick=function(){TG.openTelegramLink(url)};$('#subc').onclick=function(){shut();boot()}}
+ function renderShop(){var mm=[3,6,12];STARS.forEach(function(x){x[1]=Math.round(x[0]*RATE);x[2]=0});PREM.forEach(function(x,i){x[1]=ME.prices.premium_rub[mm[i]];x[2]=0});
+  $('#stars').innerHTML=STARS.map(function(x,i){return '<button class="card'+(i==2?' hot':'')+'" data-st="'+i+'"><span class="big">'+SI+' '+x[0]+'</span><span class="sub">Звёзд на аккаунт</span><span class="price">'+fmt(x[1])+' ₽</span></button>'}).join('');
+  $('#prem').innerHTML=PREM.map(function(x,i){return '<button class="card" data-pr="'+i+'"><span class="big">'+PM+' '+x[0].split(' ')[0]+'</span><span class="sub">'+x[0].split(' ')[1]+' Premium</span><span class="price">'+fmt(x[1])+' ₽</span></button>'}).join('');
+  $('#rng').oninput=function(){var v=+this.value;$('#cs').textContent='⭐ '+fmt(v);$('#cp').textContent=fmt(Math.round(v*RATE))+' ₽'};$('#rng').oninput.call($('#rng'))}
+ pay=function(title,rubv){var u=(TG.initDataUnsafe&&TG.initDataUnsafe.user&&TG.initDataUnsafe.user.username)||'';
+  var m=/Premium/.test(title),n=parseInt(title.replace(/\D/g,''),10),r=m?ME.prices.premium_rub[n]:Math.round(n*RATE);
+  sheet('<h3>'+title+'</h3><p>К оплате '+fmt(r)+' ₽. Кому отправить?</p><input class="inp" id="un" placeholder="@username получателя" value="'+(u?'@'+u:'')+'" autocapitalize="off" autocomplete="off"><button class="pay" data-lpay="card"><i><svg viewBox="0 0 48 48"><use href="#i-card"/></svg></i><div>Банковская карта / СБП<small>Оплата через Банку</small></div></button><button class="pay" data-lpay="crypto"><i><svg viewBox="0 0 48 48"><use href="#i-bot"/></svg></i><div>CryptoBot<small>USDT, TON и другие</small></div></button><button class="btn g" data-shut>Отмена</button>');$('#sheet').dataset.t=title}
+ document.addEventListener('click',function(e){var c=e.target.closest('[data-lpay]');if(c)lpay(c.dataset.lpay);if(e.target.closest('[data-again]'))showCase(C.indexOf(cur))});
+ function lpay(m){var un=($('#un').value||'').trim().replace(/^@/,'');if(!/^[A-Za-z0-9_]{5,32}$/.test(un)){toast('Введи username получателя (от 5 символов)');return}
+  var t=$('#sheet').dataset.t,b=/Premium/.test(t)?{product:'premium',months:parseInt(t.replace(/\D/g,''),10)}:{product:'stars',amount:parseInt(t.replace(/\D/g,''),10)};b.username=un;b.method=m;
+  api('/api/order',b).then(function(r){if(r.error){if(r.error==='need_sub')return needSub(r.channel_url);toast('Не получилось создать счёт, попробуй ещё раз');return}
+   if(r.open==='telegram')TG.openTelegramLink(r.url);else TG.openLink(r.url);
+   sheet('<h3>Ждём оплату</h3><div class="wait"></div><p>Оплати счёт в открывшемся окне. Товар придёт сам через пару минут после оплаты.</p><button class="btn g" data-shut>Закрыть</button>');
+   var n=0;clearInterval(POLL);POLL=setInterval(function(){n++;api('/api/order/'+r.order_id).then(function(o){
+    if(o.status==='done'){clearInterval(POLL);S.hist.unshift([t+' → @'+un,'готово']);sync();sheet('<div class="win"><div class="n">Готово!</div><div class="v">'+t+' отправлено на @'+un+'</div></div><button class="btn" data-shut>Отлично</button>');boot(true)}
+    else if(o.status==='failed'||o.status==='expired'){clearInterval(POLL);sheet('<h3>Не получилось</h3><p>'+(o.message||'Попробуй ещё раз')+'</p><button class="btn g" data-shut>Закрыть</button>')}});if(n>180)clearInterval(POLL)},4000)})}
+ function anim(c,k,done){var a=[],N=38,W=32;for(var i=0;i<N;i++)a.push(i===W?k:Math.floor(Math.random()*P.length));var st=$('#strip');st.innerHTML=a.map(function(i){return it(P[i])}).join('');
+  var dur=S.fast?900:4200,off=8+W*104+48-st.parentNode.clientWidth/2+(Math.random()*60-30);st.style.transition='none';st.style.transform='translateX(0)';st.getBoundingClientRect();
+  st.style.transition='transform '+dur+'ms cubic-bezier(.08,.6,.12,1)';st.style.transform='translateX(-'+off+'px)';setTimeout(done,dur+200)}
+ function landed(c,g){var k=P.findIndex(function(p){return String(p.e)===String(g.id)});if(k<0){GIFT_IMG[g.id]=API+g.img;P.push({e:g.id,n:g.stars+' ⭐',v:g.stars,r:g.stars<=25?1:g.stars<=59?2:g.stars<100?3:4,w:1});k=P.length-1}
+  S.open++;sync();anim(c,k,function(){var p=P[k];S.hist.unshift([p.n+' из «'+c.n+'»','кейс']);sync();
+   sheet('<div class="win"><div class="e">'+G(p.e)+'</div><div class="n">'+p.n+'</div><div class="v">Подарок отправлен в твой профиль Telegram</div></div><button class="btn" data-again>Открыть ещё раз</button><button class="btn g" data-shut>Закрыть</button>')})}
+ showCase=function(i){var c=C[i];cur=c;
+  sheet('<h3 class="h3i">'+CI(c.t)+c.n+' · '+SI+' '+fmt(c.p)+'</h3><p>Приз выбирает сервер и сразу отправляет подарок в твой Telegram.</p><div class="reel"><div class="strip" id="strip">'+P.slice(0,16).map(function(p){return it(p)}).join('')+'</div></div><h2 style="margin-top:0">Что может выпасть</h2><div class="cg">'+P.slice(0,24).map(function(p){return it(p)}).join('')+'</div><button class="btn" id="go">Открыть за '+SI+' '+fmt(c.p)+'</button><button class="btn g" data-shut>Закрыть</button>');
+  $('#go').onclick=function(){spin(c)}}
+ spin=function(c){var b=$('#go');b.disabled=true;api('/api/case/open',{case:c.key}).then(function(r){
+   if(r.error){b.disabled=false;if(r.error==='need_sub')return needSub(r.channel_url);toast('Не получилось открыть кейс');return}
+   if(r.paid){S.bal=r.bonus;sync();landed(c,r.gift);return}
+   TG.openInvoice(r.invoice,function(st){if(st!=='paid'){b.disabled=false;toast('Оплата отменена');return}
+    var n=0;clearInterval(POLL);POLL=setInterval(function(){n++;api('/api/case/result/'+r.token).then(function(o){
+     if(o.status==='done'){clearInterval(POLL);landed(c,o.gift)}else if(o.status==='failed'){clearInterval(POLL);b.disabled=false;toast(o.message||'Кейс не открылся')}});if(n>40){clearInterval(POLL);b.disabled=false}},1500)})})}
+ function boot(quiet){api('/api/me').then(function(m){if(m.error)return fatal();ME=m;S.bal=m.bonus;RATE=m.prices.star_rub;renderShop();
+   $('.ref b').textContent='Бонусные звёзды за покупки друзей';$('.ref .sub').textContent='Приглашено друзей: '+m.invited;$('.ref code').textContent=m.ref_link;
+   $('#copy').onclick=function(){try{navigator.clipboard.writeText(m.ref_link)}catch(e){}toast('Ссылка скопирована')};
+   $('#cb').onclick=function(){var v=+$('#rng').value;pay('⭐ '+fmt(v)+' Stars')};sync();
+   if(!m.subscribed&&!quiet)needSub(m.channel_url);
+   api('/api/gifts').then(function(g){P=(g.gifts||[]).map(function(x){GIFT_IMG[x.id]=API+x.img;return {e:x.id,n:x.stars+' ⭐',v:x.stars,r:x.stars<=25?1:x.stars<=59?2:x.stars<100?3:4,w:1}});
+    C=m.cases.map(function(c){return {t:2,n:c.name,d:'Случайный подарок Telegram',p:c.price,pool:P.map(function(_,i){return i}),cat:'all',key:c.key}});cat='all';renderCases()})}).catch(fatal)}
+ if(!API)fatal();else boot();
+}
+
 </script></body></html>
