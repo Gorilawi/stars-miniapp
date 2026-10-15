@@ -128,6 +128,17 @@ nav button{flex:1;padding:11px 0 9px;font-size:12px;color:var(--mute);display:fl
 .inp{width:100%;background:var(--p2);border:1px solid var(--line);border-radius:12px;padding:13px;margin-bottom:10px;font-size:15px}
 .lv .ban,.lv .daily,.lv #feed,.lv #feedh,.lv #chips,.lv #promoh,.lv .promo,.lv #invh,.lv #inv,.lv #onlw{display:none}
 .wait{width:34px;height:34px;border-radius:50%;border:4px solid var(--line);border-top-color:var(--gold);margin:6px auto 14px;animation:spin2 1s linear infinite}@keyframes spin2{to{transform:rotate(360deg)}}
+.lv nav button[data-t="up"],.lv #t-up{display:none!important}
+.upw{position:relative;width:240px;height:240px;margin:6px auto 0}.upw svg{width:100%;height:100%;overflow:visible}
+.upc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
+.upc b{font-size:34px;font-weight:800}.upc span{font-size:12px;color:var(--mute)}
+.trk{fill:none;stroke:var(--p2);stroke-width:16}.arc{fill:none;stroke:var(--ok);stroke-width:16;stroke-linecap:round;transition:stroke-dasharray .35s}
+#ptr{transform-origin:110px 110px;transition:transform 4s cubic-bezier(.1,.7,.1,1)}
+.slots{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 10px}
+.slot{background:var(--panel);border:1.5px dashed var(--line);border-radius:18px;padding:12px 8px;text-align:center;min-height:132px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.slot.f{border-style:solid;border-color:rgba(255,197,61,.45)}.slot .gi{width:62px;height:62px}.slot small{color:var(--mute);font-size:12px}.slot b{font-size:14px}
+.mx{display:flex;gap:6px;margin-bottom:10px}.mx button{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:8px 0;font-weight:700;font-size:13px}.mx button.on{background:var(--gold);color:var(--gi);border-color:var(--gold)}
+.pk{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}.pk button{padding:0;background:none}.pk .it{width:100%}
 </style></head><body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe38a"/><stop offset="1" stop-color="#ff9f1c"/></linearGradient>
@@ -161,7 +172,7 @@ nav button{flex:1;padding:11px 0 9px;font-size:12px;color:var(--mute);display:fl
 <symbol id="i-bot" viewBox="0 0 48 48"><rect x="5" y="12" width="38" height="30" rx="10" fill="#2a7bff"/><path d="M24 12V6" stroke="#2a7bff" stroke-width="3"/><circle cx="24" cy="5" r="3" fill="url(#gold)"/><circle cx="16" cy="26" r="5" fill="#fff"/><circle cx="32" cy="26" r="5" fill="#fff"/><circle cx="17" cy="27" r="2.4" fill="#0b2a6b"/><circle cx="33" cy="27" r="2.4" fill="#0b2a6b"/><rect x="19" y="35" width="10" height="3" rx="1.5" fill="#fff" opacity=".8"/></symbol>
 <symbol id="n-cart" viewBox="0 0 24 24"><path d="M3 4h3l2.2 11h10.3l2-8H7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9.5" cy="19.5" r="1.6" fill="currentColor"/><circle cx="17" cy="19.5" r="1.6" fill="currentColor"/></symbol>
 <symbol id="n-gift" viewBox="0 0 24 24"><rect x="3.5" y="9" width="17" height="11.5" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2.5 9h19M12 9v11.5M12 9C8 9 7 4 9.5 4S12 7 12 9zM12 9c4 0 5-5 2.5-5S12 7 12 9z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
-<symbol id="n-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+<symbol id="n-up" viewBox="0 0 24 24"><path d="M5 11l7-7 7 7M5 19l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol><symbol id="n-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
 </defs></svg>
 <div id="splash" role="status" aria-label="Загрузка"><div class="stage"><div class="rays"></div><div class="glow"></div><div class="ring"></div><div class="ring b"></div><div class="floor"></div>
 <svg class="box" viewBox="0 0 160 170" width="170" height="180" aria-hidden="true">
@@ -190,6 +201,15 @@ nav button{flex:1;padding:11px 0 9px;font-size:12px;color:var(--mute);display:fl
   <div class="chips" id="chips"></div><div id="caselist"></div>
 </section>
 
+<section class="tab" id="t-up">
+  <h2>Апгрейд подарков</h2>
+  <div class="upw"><svg viewBox="0 0 220 220"><circle class="trk" cx="110" cy="110" r="84"/><circle class="arc" id="arc" cx="110" cy="110" r="84" transform="rotate(-90 110 110)" stroke-dasharray="0 528"/><g id="ptr"><polygon points="110,14 102,0 118,0" fill="#ffc53d"/><rect x="108.5" y="14" width="3" height="14" rx="1.5" fill="#ffc53d"/></g></svg>
+  <div class="upc"><b id="upch">0%</b><span>шанс апгрейда</span></div></div>
+  <div class="slots"><button class="slot" id="s1"></button><button class="slot" id="s2"></button></div>
+  <div class="mx" id="mx"></div>
+  <button class="btn" id="upgo" disabled>Апгрейд</button>
+  <div class="sub" style="text-align:center;margin-top:8px">В демо подарки берутся из инвентаря. Шанс = стоимость твоего подарка / стоимость цели, минус 5% комиссии.</div>
+</section>
 <section class="tab" id="t-prof">
   <div class="me"><div class="av">А</div><div style="flex:1"><b style="font-size:18px">Алекс</b><div class="sub">ID 12345678 · <span id="lvl">Уровень 1</span></div><div class="xp"><div id="xpb"></div></div></div></div>
   <div class="st"><div><b id="sb">150</b><span>Баланс ⭐</span></div><div><b id="so">0</b><span>Кейсов</span></div><div><b id="ss">0</b><span>Выиграно ⭐</span></div></div>
@@ -203,7 +223,7 @@ nav button{flex:1;padding:11px 0 9px;font-size:12px;color:var(--mute);display:fl
   <h2>История</h2><div id="hist"></div>
 </section>
 
-<nav><button class="on" data-t="shop"><svg><use href="#n-cart"/></svg>Магазин</button><button data-t="cases"><svg><use href="#n-gift"/></svg>Кейсы</button><button data-t="prof"><svg><use href="#n-user"/></svg>Профиль</button></nav>
+<nav><button class="on" data-t="shop"><svg><use href="#n-cart"/></svg>Магазин</button><button data-t="cases"><svg><use href="#n-gift"/></svg>Кейсы</button><button data-t="up"><svg><use href="#n-up"/></svg>Апгрейд</button><button data-t="prof"><svg><use href="#n-user"/></svg>Профиль</button></nav>
 <div class="sbg" id="bg"><div class="sheet" id="sheet"></div></div><div class="toast" id="toast"></div>
 
 <script>
@@ -294,6 +314,41 @@ for(var j=0;j<18;j++){var p=document.createElement('div');p.className='sp';p.sty
 var done=false;function hide(){if(done)return;done=true;sp.classList.add('out');setTimeout(function(){sp.remove()},600)}
 sp.addEventListener('click',hide);setTimeout(hide,3600)})();
 $('#dico').innerHTML=CI(0);renderCases();sync();updDaily();
+/* ===================== АПГРЕЙД ПОДАРКОВ (демо) ===================== */
+(function(){
+ var demo=!(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initData);
+ if(demo&&!S.inv.length){S.inv=[P[0],P[2],P[3]];sync()}
+ var src=-1,tg=-1,mult=0,spinning=false,ang=0,C=2*Math.PI*84;
+ function chance(){if(src<0||tg<0)return 0;return Math.max(1,Math.min(75,S.inv[src].v/P[tg].v*100*.95))}
+ function slot(el,p,label){el.className='slot'+(p?' f':'');el.innerHTML=p?G(p.e)+'<b>'+p.n.replace(' ⭐','')+' '+SI+'</b><small>'+label+'</small>':'<small>'+label+'</small>'}
+ function draw(){var ch=chance();$('#arc').setAttribute('stroke-dasharray',(C*ch/100)+' '+C);$('#upch').textContent=ch.toFixed(1)+'%';
+  slot($('#s1'),src>=0?S.inv[src]:null,'Выбери свой подарок');slot($('#s2'),tg>=0?P[tg]:null,'Выбери цель');
+  $('#mx').innerHTML=[2,3,5,10].map(function(m){return '<button data-m="'+m+'" class="'+(mult===m?'on':'')+'">x'+m+'</button>'}).join('');
+  $('#upgo').disabled=spinning||src<0||tg<0}
+ function targets(v){return P.map(function(p,i){return i}).filter(function(i){return P[i].v>v})}
+ function pickTarget(m){if(src<0){toast('Сначала выбери свой подарок');return}var v=S.inv[src].v,t=targets(v);if(!t.length){toast('Это самый дорогой подарок, апгрейдить некуда');tg=-1;return}
+  var best=t.reduce(function(a,b){return Math.abs(P[b].v-v*m)<Math.abs(P[a].v-v*m)?b:a});tg=best}
+ window.renderUp=function(){if(src>=S.inv.length)src=-1;draw()};
+ $('#s1').onclick=function(){if(spinning)return;if(!S.inv.length){toast('Инвентарь пуст. Открой кейс, чтобы получить подарок');return}
+  sheet('<h3>Твой подарок</h3><p>Выбери, что апгрейдить. При проигрыше он сгорает.</p><div class="pk">'+S.inv.map(function(p,i){return '<button data-ups="'+i+'">'+it(p)+'</button>'}).join('')+'</div><button class="btn g" data-shut>Закрыть</button>')};
+ $('#s2').onclick=function(){if(spinning)return;if(src<0){toast('Сначала выбери свой подарок');return}var t=targets(S.inv[src].v);if(!t.length){toast('Это самый дорогой подарок');return}
+  sheet('<h3>Цель апгрейда</h3><p>Чем дороже цель, тем ниже шанс.</p><div class="pk">'+t.map(function(i){return '<button data-upt="'+i+'">'+it(P[i])+'</button>'}).join('')+'</div><button class="btn g" data-shut>Закрыть</button>')};
+ document.addEventListener('click',function(e){var c;
+  if(c=e.target.closest('[data-ups]')){src=+c.dataset.ups;if(tg>=0&&P[tg].v<=S.inv[src].v)tg=-1;if(mult)pickTarget(mult);shut();draw()}
+  else if(c=e.target.closest('[data-upt]')){tg=+c.dataset.upt;mult=0;shut();draw()}
+  else if(c=e.target.closest('[data-m]')){mult=+c.dataset.m;pickTarget(mult);draw()}});
+ document.querySelector('nav [data-t="up"]').addEventListener('click',function(){renderUp()});
+ $('#upgo').onclick=function(){if(spinning||src<0||tg<0)return;var ch=chance(),r=Math.random()*100,win=r<ch,srcItem=S.inv[src],tgItem=P[tg];spinning=true;draw();
+  var pos=win?Math.random()*ch:ch+Math.random()*(100-ch);ang+=360*5+((pos*3.6)-(ang%360)+360)%360;
+  var p=$('#ptr');p.style.transform='rotate('+ang+'deg)';
+  setTimeout(function(){spinning=false;S.inv.splice(src,1);
+   if(win){S.inv.unshift(tgItem);S.won+=tgItem.v-srcItem.v;S.hist.unshift(['Апгрейд '+srcItem.n+' → '+tgItem.n,'успех']);
+    sheet('<div class="win"><div class="e">'+G(tgItem.e)+'</div><div class="n">Апгрейд удался!</div><div class="v">'+srcItem.n+' → '+tgItem.n+'</div></div><button class="btn" data-shut>Забрать</button>')}
+   else{S.hist.unshift(['Апгрейд '+srcItem.n,'сгорел']);
+    sheet('<div class="win"><div class="e" style="opacity:.45;filter:grayscale(1)">'+G(srcItem.e)+'</div><div class="n">Не повезло</div><div class="v">Подарок сгорел. Шанс был '+ch.toFixed(1)+'%</div></div><button class="btn" data-shut>Ещё раз</button>')}
+   src=-1;tg=-1;mult=0;sync();draw()},4300)};
+ draw()})();
+
 /* ===================== LIVE-режим: работает внутри Telegram с API бота ===================== */
 var TG=window.Telegram&&Telegram.WebApp,LIVE=!!(TG&&TG.initData),API='',API_URL='';/* API_URL: постоянный адрес API, если есть свой домен */
 if(LIVE){
